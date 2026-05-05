@@ -5,7 +5,7 @@ import sys
 import sqlite3
 
 
-class CadrastroVeiculos:
+class CadastroTuristico:
 
     def __init__(self):
         self.tela = Tk()
@@ -25,7 +25,7 @@ class CadrastroVeiculos:
         self.placa = 600
 
         self.var = StringVar()
-        self.var.set("m")
+        self.var.set("sim")
 
         largura_screen = self.tela.winfo_screenwidth()
         placa_screen = self.tela.winfo_screenheight()
@@ -37,17 +37,17 @@ class CadrastroVeiculos:
 
     #CRIAR BANCO DE DADOS SQLITE
     def criar_banco(self):
-        self.conn = sqlite3.connect("carros.db")
+        self.conn = sqlite3.connect("turistico.db")
         self.cursor = self.conn.cursor()
 
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS carros (
+        CREATE TABLE IF NOT EXISTS turistico (
             codigo INTEGER PRIMARY KEY,
             nome TEXT,
-            modelo INTEGER,
-            utilitario TEXT,
-            placa REAL,
-            marca TEXT
+            cidade TEXT,
+            guia TEXT,
+            valor REAL,
+            estado TEXT
         )
         """)
         self.conn.commit()    
@@ -58,17 +58,17 @@ class CadrastroVeiculos:
 
         try:
             self.cursor.execute("""
-            INSERT INTO carros (
-                codigo, nome, modelo, utilitario, placa,
-                marca
+            INSERT INTO turistico (
+                codigo, nome, cidade, guia, valor,
+                estado
             ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 self.txt_codigo.get(),
                 self.txt_nome.get(),
-                self.txt_modelo.get(),
+                self.txt_cidade.get(),
                 self.var.get(),
-                self.txt_placa.get(),
-                self.cmb_marca.get()
+                self.txt_valor.get(),
+                self.cmb_estado.get()
             ))
 
             self.conn.commit()
@@ -114,11 +114,11 @@ class CadrastroVeiculos:
 
         # Labels
         Label(self.tela, text="Código:").place(x=130, y=50)
-        Label(self.tela, text="Nome do Veiculo:").place(x=75, y=80)
-        Label(self.tela, text="Modelo").place(x=510, y=80)
-        Label(self.tela, text="Utilitario:").place(x=130, y=140)
-        Label(self.tela, text="Placa:").place(x=145, y=110)
-        Label(self.tela, text="Marca").place(x=510, y=110)
+        Label(self.tela, text="Nome Local:").place(x=105, y=80)
+        Label(self.tela, text="Cidade").place(x=510, y=80)
+        Label(self.tela, text="Necessita Guia:").place(x=97, y=140)
+        Label(self.tela, text="Valor Entrada:").place(x=105, y=110)
+        Label(self.tela, text="Estado").place(x=510, y=110)
         
 
         # Caixas de Texto
@@ -128,22 +128,22 @@ class CadrastroVeiculos:
         self.txt_nome = Entry(self.tela, width=50)
         self.txt_nome.place(x=180, y=80)
         
-        self.txt_modelo = Entry(self.tela, width=20)
-        self.txt_modelo.place(x=560, y=80)
+        self.txt_cidade = Entry(self.tela, width=20)
+        self.txt_cidade.place(x=560, y=80)
         
-        self.txt_placa = Entry(self.tela, width=10)
-        self.txt_placa.place(x=185, y=110)
+        self.txt_valor = Entry(self.tela, width=10)
+        self.txt_valor.place(x=185, y=110)
                                    
 
         # Combobox
-        self.cmb_marca = ttk.Combobox(self.tela)
-        self.cmb_marca['values'] = ("Chevrolet", "Fiat", "Suzuky", "Celta", "Uno", "Ford" )
-        self.cmb_marca.current(1)
-        self.cmb_marca.place(x=560, y=110)
+        self.cmb_estado = ttk.Combobox(self.tela)
+        self.cmb_estado['values'] = ("SP", "MG", "PR", "AL", "ES", "BH" )
+        self.cmb_estado.current(1)
+        self.cmb_estado.place(x=560, y=110)
 
         # Radio buttons
-        Radiobutton(self.tela, text="Utilitario", variable=self.var, value="utilitario").place(x=185, y=140)
-        Radiobutton(self.tela, text="Não utilitario", variable=self.var, value="nao utilitario").place(x=260, y=140)
+        Radiobutton(self.tela, text="Sim", variable=self.var, value="sim").place(x=185, y=140)
+        Radiobutton(self.tela, text="Não", variable=self.var, value="nao").place(x=235, y=140)
 
        
         # Botões
@@ -172,13 +172,13 @@ class CadrastroVeiculos:
         self.btn_sair.place(x=620, y=260)
 
         #TABELA PARA MOSTRAR DADOS SQLITE
-        self.tree = ttk.Treeview(self.tela, columns=("cod","nome","modelo","utilitario","marca"), show="headings")
+        self.tree = ttk.Treeview(self.tela, columns=("cod","nome","cidade","guia","estado"), show="headings")
 
         self.tree.heading("cod", text="Código")
         self.tree.heading("nome", text="Nome")
-        self.tree.heading("modelo", text="modelo")
-        self.tree.heading("utilitario", text="Utilitario")
-        self.tree.heading("marca", text="marca")
+        self.tree.heading("cidade", text="cidade")
+        self.tree.heading("guia", text="Necessita guia")
+        self.tree.heading("estado", text="estado")
 
         self.tree.place(x=20, y=350, width=950, height=200)
 
@@ -195,28 +195,28 @@ class CadrastroVeiculos:
         self.txt_nome.delete(0, END)
         self.txt_nome.insert(0, dados[1])
 
-        self.txt_modelo.delete(0, END)
-        self.txt_modelo.insert(0, dados[2])
+        self.txt_cidade.delete(0, END)
+        self.txt_cidade.insert(0, dados[2])
 
         self.var.set(dados[3])
-        self.cmb_marca.set(dados[4])
+        self.cmb_estado.set(dados[4])
 
     #ATUALIZAR DADOS SQLITE
     def atualizar(self):
         self.cursor.execute("""
-        UPDATE carros SET
+        UPDATE turistico SET
             nome=?,
-            modelo=?,
-            utilitario=?,
-            placa=?,
-            marca=?,
+            cidade=?,
+            guia=?,
+            valor=?,
+            estado=?,
         WHERE codigo=?
         """, (
             self.txt_nome.get(),
-            self.txt_modelo.get(),
+            self.txt_cidade.get(),
             self.var.get(),
-            self.txt_placa.get(),
-            self.cmb_marca.get(),
+            self.txt_valor.get(),
+            self.cmb_estado.get(),
             self.txt_codigo.get()
         ))
 
@@ -228,13 +228,13 @@ class CadrastroVeiculos:
        for item in self.tree.get_children():
            self.tree.delete(item)
 
-       self.cursor.execute("SELECT codigo, nome, modelo, utilitario, marca FROM carros")
+       self.cursor.execute("SELECT codigo, nome, cidade, guia, estado FROM turistico")
        for row in self.cursor.fetchall():
            self.tree.insert("", "end", values=row)
 
         #EXCLUIR DADOS BANCO DE DADOS
     def excluir(self):
-        self.cursor.execute("DELETE FROM carros WHERE codigo=?", (self.txt_codigo.get(),))
+        self.cursor.execute("DELETE FROM turistico WHERE codigo=?", (self.txt_codigo.get(),))
         self.conn.commit()
         self.consultar_dados()
         Label(self.tela, text="Dados excluidos com sucesso!", fg="green").place(x=20, y=320)
