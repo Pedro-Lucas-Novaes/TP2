@@ -1,155 +1,230 @@
 from tkinter import *
+from tkinter import ttk, messagebox
 import pymongo
-import sys
-from tkinter import ttk
 
 
 class Produtos:
 
     def __init__(self):
-        self.tela = Tk()
-        self.tela.title("Exemplo Mongo DB")
-        self.tela.geometry("800x600")
-        self.tela.configure(background='#ffffff')
 
-        # CRIAR BANCO DE DADOS MONGO
+        self.tela = Tk()
+        self.tela.title("CRUD Produtos MongoDB")
+        self.tela.geometry("900x600")
+        self.tela.configure(bg="#f0f0f0")
+
+        # CONEXÃO MONGO
         self.conexao = pymongo.MongoClient("mongodb://localhost:27017/")
-        # CRIA BASE DE DADOS
         self.db = self.conexao["produtos"]
-        # CRIA COLEÇÃO
         self.collection = self.db["produtos"]
 
         self.criar_componentes()
 
     def criar_componentes(self):
 
-        Label(self.tela, text="Cadastro de Produtos",
-              font=("Arial", 30, "bold"),
-              bg="#ffffff").place(x=200, y=50)
+        Label(
+            self.tela,
+            text="Cadastro de Produtos",
+            font=("Arial", 24, "bold"),
+            bg="#f0f0f0",
+            fg="#333"
+        ).pack(pady=20)
 
-        Label(self.tela, text="Código:", bg="#ffffff").place(x=130, y=140)
-        self.txt_codigo = Entry(self.tela, width=20)
-        self.txt_codigo.place(x=190, y=140)
+        frame = Frame(self.tela, bg="#f0f0f0")
+        frame.pack()
 
-        Label(self.tela, text="Nome Produto:", bg="#ffffff").place(x=130, y=170)
-        self.txt_nome = Entry(self.tela, width=40)
-        self.txt_nome.place(x=190, y=170)
+        # CÓDIGO
+        Label(frame, text="Código:", bg="#f0f0f0").grid(row=0, column=0, pady=5)
+        self.txt_codigo = Entry(frame, width=20)
+        self.txt_codigo.grid(row=0, column=1)
 
-        Label(self.tela, text="Quantpreco:", bg="#ffffff").place(x=450, y=170)
-        self.txt_quantpreco = Entry(self.tela, width=20)
-        self.txt_quantpreco.place(x=480, y=170)
+        # NOME
+        Label(frame, text="Nome:", bg="#f0f0f0").grid(row=1, column=0, pady=5)
+        self.txt_nome = Entry(frame, width=40)
+        self.txt_nome.grid(row=1, column=1)
 
-        Label(self.tela, text="Preço:", bg="#ffffff").place(x=130, y=200)
-        self.txt_preco = Entry(self.tela, width=20)
-        self.txt_preco.place(x=190, y=200)
+        # QUANTIDADE
+        Label(frame, text="Quantidade:", bg="#f0f0f0").grid(row=2, column=0, pady=5)
+        self.txt_quantidade = Entry(frame, width=20)
+        self.txt_quantidade.grid(row=2, column=1)
 
-        self.lbl_resultado = Label(self.tela, text="", bg="#b52020")
-        self.lbl_resultado.place(x=490, y=410)
+        # PREÇO
+        Label(frame, text="Preço:", bg="#f0f0f0").grid(row=3, column=0, pady=5)
+        self.txt_preco = Entry(frame, width=20)
+        self.txt_preco.grid(row=3, column=1)
 
-        # CRIANDO OS BOTÕES
-        self.foto_salvar = PhotoImage(file="icones/salvar.png")
-        self.foto_excluir = PhotoImage(file="icones/excluir.png")
-        self.foto_alterar = PhotoImage(file="icones/alterar.png")
-        self.foto_consultar = PhotoImage(file="icones/consultar.png")
-        self.foto_sair = PhotoImage(file="icones/sair.png")
+        # BOTÕES
+        frame_botoes = Frame(self.tela, bg="#f0f0f0")
+        frame_botoes.pack(pady=20)
 
-        self.btn_salvar = Button(
-            self.tela, text="Cadastrar Produto",
-            image=self.foto_salvar,
-            compound=TOP,
+        Button(
+            frame_botoes,
+            text="Cadastrar",
+            width=15,
+            bg="#4CAF50",
+            fg="white",
             command=self.salvar
-        )
-        self.btn_salvar.place(x=130, y=280)
+        ).grid(row=0, column=0, padx=10)
 
-        self.btn_excluir = Button(
-            self.tela, text="Excluir Produto",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.excluir
-        )
-        self.btn_excluir.place(x=220, y=280)
-
-        self.btn_alterar = Button(
-            self.tela, text="Alterar Produto",
-            image=self.foto_alterar,
-            compound=TOP,
-            command=self.atualizar
-        )
-        self.btn_alterar.place(x=310, y=280)
-
-        self.btn_consultar = Button(
-            self.tela, text="Consultar Produto",
-            image=self.foto_consultar,
-            compound=TOP,
+        Button(
+            frame_botoes,
+            text="Consultar",
+            width=15,
+            bg="#2196F3",
+            fg="white",
             command=self.consultar
-        )
-        self.btn_consultar.place(x=400, y=280)
+        ).grid(row=0, column=1, padx=10)
 
-        self.btn_sair = Button(
-            self.tela, text="Sair",
-            image=self.foto_sair,
-            compound=RIGHT,
-            command=self.sair
+        Button(
+            frame_botoes,
+            text="Alterar",
+            width=15,
+            bg="#FFC107",
+            command=self.atualizar
+        ).grid(row=0, column=2, padx=10)
+
+        Button(
+            frame_botoes,
+            text="Excluir",
+            width=15,
+            bg="#F44336",
+            fg="white",
+            command=self.excluir
+        ).grid(row=0, column=3, padx=10)
+
+        # TABELA
+        self.tabela = ttk.Treeview(
+            self.tela,
+            columns=("codigo", "nome", "quantidade", "preco", "total"),
+            show="headings",
+            height=10
         )
-        self.btn_sair.place(x=490, y=280)
+
+        self.tabela.heading("codigo", text="Código")
+        self.tabela.heading("nome", text="Nome")
+        self.tabela.heading("quantidade", text="Quantidade")
+        self.tabela.heading("preco", text="Preço")
+        self.tabela.heading("total", text="Total")
+
+        self.tabela.pack(pady=20)
+
+        self.listar_produtos()
 
     def salvar(self):
+
         try:
-            cliente = {
-                "código": self.txt_codigo.get(),
-                "nome": self.txt_nome.get(),
-                "preco": float(self.txt_preco.get()),
-                "quantpreco": int(self.txt_quantpreco.get())
+
+            codigo = self.txt_codigo.get()
+            nome = self.txt_nome.get()
+            quantidade = int(self.txt_quantidade.get())
+            preco = float(self.txt_preco.get())
+
+            total = quantidade * preco
+
+            produto = {
+                "codigo": codigo,
+                "nome": nome,
+                "quantidade": quantidade,
+                "preco": preco,
+                "total": total
             }
 
-            self.collection.insert_one(cliente)
+            self.collection.insert_one(produto)
+
+            messagebox.showinfo("Sucesso", "Produto cadastrado!")
+
             self.limpar()
-            self.lbl_resultado.config(text="Salvo com sucesso!")
+            self.listar_produtos()
 
-        except:
-            self.lbl_resultado.config(text="Erro ao salvar")
-
-    def atualizar(self):
-        codigo = self.txt_codigo.get()
-
-        self.collection.update_one(
-            {"código": codigo},
-            {"$set": {
-                "nome": self.txt_nome.get(),
-                "preco": float(self.txt_preco.get()),
-                "quantpreco": self.txt_quantpreco.get()
-            }}
-        )
-
-        self.limpar()
-        self.lbl_resultado.config(text="Atualizado!")
-
-    def excluir(self):
-        codigo = self.txt_codigo.get()
-        self.collection.delete_one({"código": codigo})
-        self.limpar()
-        self.lbl_resultado.config(text="Excluído!")
+        except Exception as erro:
+            messagebox.showerror("Erro", f"Erro ao salvar:\n{erro}")
 
     def consultar(self):
+
         codigo = self.txt_codigo.get()
 
-        resultado = self.collection.find_one({"código": codigo})
+        resultado = self.collection.find_one({"codigo": codigo})
 
         if resultado:
+
+            self.limpar()
+
+            self.txt_codigo.insert(END, resultado["codigo"])
             self.txt_nome.insert(END, resultado["nome"])
+            self.txt_quantidade.insert(END, resultado["quantidade"])
             self.txt_preco.insert(END, resultado["preco"])
-            self.txt_quantpreco.insert(END, resultado["quantpreco"])
+
         else:
-            self.lbl_resultado.config(text="Não encontrado")
+            messagebox.showwarning("Aviso", "Produto não encontrado!")
+
+    def atualizar(self):
+
+        try:
+
+            codigo = self.txt_codigo.get()
+
+            quantidade = int(self.txt_quantidade.get())
+            preco = float(self.txt_preco.get())
+
+            total = quantidade * preco
+
+            self.collection.update_one(
+                {"codigo": codigo},
+                {
+                    "$set": {
+                        "nome": self.txt_nome.get(),
+                        "quantidade": quantidade,
+                        "preco": preco,
+                        "total": total
+                    }
+                }
+            )
+
+            messagebox.showinfo("Sucesso", "Produto atualizado!")
+
+            self.limpar()
+            self.listar_produtos()
+
+        except Exception as erro:
+            messagebox.showerror("Erro", str(erro))
+
+    def excluir(self):
+
+        codigo = self.txt_codigo.get()
+
+        self.collection.delete_one({"codigo": codigo})
+
+        messagebox.showinfo("Sucesso", "Produto excluído!")
+
+        self.limpar()
+        self.listar_produtos()
+
+    def listar_produtos(self):
+
+        for item in self.tabela.get_children():
+            self.tabela.delete(item)
+
+        produtos = self.collection.find()
+
+        for produto in produtos:
+
+            self.tabela.insert(
+                "",
+                END,
+                values=(
+                    produto["codigo"],
+                    produto["nome"],
+                    produto["quantidade"],
+                    produto["preco"],
+                    produto["total"]
+                )
+            )
 
     def limpar(self):
+
         self.txt_codigo.delete(0, END)
         self.txt_nome.delete(0, END)
+        self.txt_quantidade.delete(0, END)
         self.txt_preco.delete(0, END)
-        self.txt_quantpreco.delete(0, END)
-
-    def sair(self):
-        self.tela.destroy()
 
     def executar(self):
         self.tela.mainloop()
