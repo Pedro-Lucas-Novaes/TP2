@@ -1,234 +1,503 @@
 from tkinter import *
 from tkinter import ttk, messagebox
-import tkinter as tk
-import sys
-import os
+import pymongo
 
 
-try:
-    import pymongo
-except:
-    os.system(f'"{sys.executable}" -m pip install pymongo')
-    import pymongo
-
-
-class CadastroClientes:
+class CadastroPacientes:
 
     def __init__(self):
+
         self.tela = Tk()
-        self.tela.title("Exemplo Mongo DB")
-        self.tela.configure(bg="#ffffff")
+        self.tela.title("Cadastro de Pacientes")
+        self.tela.geometry("850x520")
+        self.tela.configure(bg="#f0f8ff")
+        self.tela.resizable(False, False)
 
-        self.largura = 700
-        self.altura = 400
-
-        self.centralizar_tela()
         self.conectar_banco()
+
+
+        self.criar_icones()
+
+
         self.criar_componentes()
 
         self.tela.mainloop()
 
-  
-    # CRIANDO TELA
-   
-    def centralizar_tela(self):
-        largura_screen = self.tela.winfo_screenwidth()
-        altura_screen = self.tela.winfo_screenheight()
-
-        posx = int(largura_screen / 2 - self.largura / 2)
-        posy = int(altura_screen / 2 - self.altura / 2)
-
-        self.tela.geometry(f"{self.largura}x{self.altura}+{posx}+{posy}")
-        self.tela.resizable(True, True)
-
-    
-    # CRIAR BANCO
-  
     def conectar_banco(self):
-        self.cliente = pymongo.MongoClient("mongodb://localhost:27017/")
-        self.db = self.cliente["exemplo"]
-        self.collection = self.db["clientes"]
 
-    
-    # COMPONENTES    
-    def criar_componentes(self):
-        self.criar_labels()
-        self.criar_campos()
-        self.criar_icones()
-        self.criar_botoes()
-
-    def criar_labels(self):
-        Label(
-            self.tela,
-            text="Cadastro de Clientes",
-            font=("Arial", 22, "bold"),
-            bg="#ffffff"
-        ).place(x=180, y=30)
-
-        Label(self.tela, text="Código:", bg="#ffffff").place(x=130, y=100)
-        Label(self.tela, text="Nome:", bg="#ffffff").place(x=130, y=130)
-        Label(self.tela, text="CPF:", bg="#ffffff").place(x=450, y=130)
-        Label(self.tela, text="Idade:", bg="#ffffff").place(x=130, y=160)
-        Label(self.tela, text="Rua:", bg="#ffffff").place(x=450, y=160)
-        Label(self.tela, text="Bairro:", bg="#ffffff").place(x=130, y=190)
-        Label(self.tela, text="Estado:", bg="#ffffff").place(x=330, y=190)
-        Label(self.tela, text="Cidade:", bg="#ffffff").place(x=520, y=190)
-
-        self.lbl_resultado = Label(self.tela, text="", bg="#ffffff")
-        self.lbl_resultado.place(x=450, y=300)
-
-    def criar_campos(self):
-        self.txt_codigo = Entry(self.tela, width=20)
-        self.txt_nome = Entry(self.tela, width=35)
-        self.txt_cpf = Entry(self.tela, width=20)
-        self.txt_idade = Entry(self.tela, width=20)
-        self.txt_end = Entry(self.tela, width=20)
-        self.txt_bairro = Entry(self.tela, width=18)
-        self.txt_cidade = Entry(self.tela, width=15)
-
-        self.comboestado = ttk.Combobox(
-            self.tela,
-            values=[
-                "São Paulo",
-                "Rio de Janeiro",
-                "Minas Gerais",
-                "Espírito Santo"
-            ],
-            width=15
+        self.cliente = pymongo.MongoClient(
+            "mongodb://localhost:27017/"
         )
 
-        self.txt_codigo.place(x=190, y=100)
-        self.txt_nome.place(x=190, y=130)
-        self.txt_cpf.place(x=480, y=130)
-        self.txt_idade.place(x=190, y=160)
-        self.txt_end.place(x=480, y=160)
-        self.txt_bairro.place(x=190, y=190)
-        self.comboestado.place(x=380, y=190)
-        self.txt_cidade.place(x=570, y=190)
+        self.db = self.cliente["hospital"]
 
-    # ICONES
-    
+        self.collection = self.db["pacientes"]
+
     def criar_icones(self):
-        self.foto_salvar = PhotoImage(file=r"icones\salvar.png")
-        self.foto_alterar = PhotoImage(file=r"icones\alterar.png")
-        self.foto_excluir = PhotoImage(file=r"icones\excluir.png")
-        self.foto_consultar = PhotoImage(file=r"icones\consultar.png")
-        self.foto_sair = PhotoImage(file=r"icones\sair.png")
 
-    
-    # BOTOES
-   
-    def criar_botoes(self):
+        self.foto_salvar = PhotoImage(
+            file=r"icones\salvar.png"
+        )
+
+        self.foto_alterar = PhotoImage(
+            file=r"icones\alterar.png"
+        )
+
+        self.foto_excluir = PhotoImage(
+            file=r"icones\excluir.png"
+        )
+
+        self.foto_consultar = PhotoImage(
+            file=r"icones\consultar.png"
+        )
+
+        self.foto_sair = PhotoImage(
+            file=r"icones\sair.png"
+        )
+
+    def criar_componentes(self):
+
+        titulo = Label(
+            self.tela,
+            text="Cadastro de Pacientes",
+            font=("Arial", 24, "bold"),
+            bg="#f0f8ff",
+            fg="#1565c0"
+        )
+
+        titulo.pack(pady=20)
+
+        # FRAME PRINCIPAL
+
+        frame = Frame(
+            self.tela,
+            bg="#f0f8ff"
+        )
+
+        frame.pack(pady=10)
+
+        Label(
+            frame,
+            text="Código:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=0, column=0, sticky=W, pady=5)
+
+        Label(
+            frame,
+            text="Nome:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=1, column=0, sticky=W, pady=5)
+
+        Label(
+            frame,
+            text="CPF:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=2, column=0, sticky=W, pady=5)
+
+        Label(
+            frame,
+            text="Telefone:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=3, column=0, sticky=W, pady=5)
+
+        Label(
+            frame,
+            text="Sexo:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=4, column=0, sticky=W, pady=5)
+
+        Label(
+            frame,
+            text="Convênio:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).grid(row=5, column=0, sticky=W, pady=5)
+
+        self.txt_codigo = Entry(
+            frame,
+            width=35,
+            font=("Arial", 11)
+        )
+
+        self.txt_nome = Entry(
+            frame,
+            width=35,
+            font=("Arial", 11)
+        )
+
+        self.txt_cpf = Entry(
+            frame,
+            width=35,
+            font=("Arial", 11)
+        )
+
+        self.txt_telefone = Entry(
+            frame,
+            width=35,
+            font=("Arial", 11)
+        )
+
+        self.combo_sexo = ttk.Combobox(
+            frame,
+            values=[
+                "Masculino",
+                "Feminino",
+                "Outro"
+            ],
+            width=32,
+            state="readonly"
+        )
+
+        self.txt_convenio = Entry(
+            frame,
+            width=35,
+            font=("Arial", 11)
+        )
+
+        self.txt_codigo.grid(
+            row=0,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        self.txt_nome.grid(
+            row=1,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        self.txt_cpf.grid(
+            row=2,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        self.txt_telefone.grid(
+            row=3,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        self.combo_sexo.grid(
+            row=4,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        self.txt_convenio.grid(
+            row=5,
+            column=1,
+            pady=5,
+            padx=10
+        )
+
+        frame_btn = Frame(
+            self.tela,
+            bg="#f0f8ff"
+        )
+
+        frame_btn.pack(pady=30)
 
         Button(
-            self.tela,
+            frame_btn,
             text="Salvar",
             image=self.foto_salvar,
             compound=TOP,
+            width=90,
+            height=90,
             command=self.salvar
-        ).place(x=130, y=250)
+        ).grid(row=0, column=0, padx=10)
 
         Button(
-            self.tela,
-            text="Alterar",
-            image=self.foto_alterar,
-            compound=TOP,
-            command=self.atualizar
-        ).place(x=220, y=250)
-
-        Button(
-            self.tela,
-            text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.apagar
-        ).place(x=310, y=250)
-
-        Button(
-            self.tela,
+            frame_btn,
             text="Consultar",
             image=self.foto_consultar,
             compound=TOP,
+            width=90,
+            height=90,
             command=self.consultar
-        ).place(x=400, y=250)
+        ).grid(row=0, column=1, padx=10)
 
         Button(
-            self.tela,
+            frame_btn,
+            text="Alterar",
+            image=self.foto_alterar,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.alterar
+        ).grid(row=0, column=2, padx=10)
+
+        Button(
+            frame_btn,
+            text="Excluir",
+            image=self.foto_excluir,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.apagar
+        ).grid(row=0, column=3, padx=10)
+
+        Button(
+            frame_btn,
             text="Sair",
             image=self.foto_sair,
             compound=TOP,
-            command=self.tela.quit
-        ).place(x=510, y=250)
+            width=90,
+            height=90,
+            command=self.tela.destroy
+        ).grid(row=0, column=4, padx=10)
 
-    
-    # MÉTODOS
-    
-    def limpar(self):
+    def limpar_campos(self):
+
         self.txt_codigo.delete(0, END)
         self.txt_nome.delete(0, END)
         self.txt_cpf.delete(0, END)
-        self.txt_idade.delete(0, END)
-        self.txt_end.delete(0, END)
-        self.txt_bairro.delete(0, END)
-        self.txt_cidade.delete(0, END)
-        self.comboestado.set("")
+        self.txt_telefone.delete(0, END)
+        self.combo_sexo.set("")
+        self.txt_convenio.delete(0, END)
 
     def dados(self):
+
         return {
-            "código": self.txt_codigo.get(),
+
+            "codigo": self.txt_codigo.get(),
             "nome": self.txt_nome.get(),
-            "idade": int(self.txt_idade.get()),
             "cpf": self.txt_cpf.get(),
-            "endereço": self.txt_end.get(),
-            "bairro": self.txt_bairro.get(),
-            "cidade": self.txt_cidade.get(),
-            "estado": self.comboestado.get()
+            "telefone": self.txt_telefone.get(),
+            "sexo": self.combo_sexo.get(),
+            "convenio": self.txt_convenio.get()
         }
 
+    def validar_campos(self):
+
+        if self.txt_codigo.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o código!"
+            )
+
+            self.txt_codigo.focus()
+
+            return False
+
+        elif self.txt_nome.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o nome!"
+            )
+
+            self.txt_nome.focus()
+
+            return False
+
+        elif self.txt_cpf.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o CPF!"
+            )
+
+            self.txt_cpf.focus()
+
+            return False
+
+        elif self.txt_telefone.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o telefone!"
+            )
+
+            self.txt_telefone.focus()
+
+            return False
+
+        elif self.combo_sexo.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Selecione o sexo!"
+            )
+
+            self.combo_sexo.focus()
+
+            return False
+
+        elif self.txt_convenio.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o convênio!"
+            )
+
+            self.txt_convenio.focus()
+
+            return False
+
+        return True
+
     def salvar(self):
-        self.collection.insert_one(self.dados())
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente salvo!")
 
-    def atualizar(self):
-        codigo = self.txt_codigo.get()
+        if self.validar_campos():
 
-        self.collection.update_one(
-            {"código": codigo},
-            {"$set": self.dados()}
-        )
+            existe = self.collection.find_one(
+                {"codigo": self.txt_codigo.get()}
+            )
 
-        messagebox.showinfo("Sucesso", "Cliente atualizado!")
+            if existe:
 
-    def apagar(self):
-        codigo = self.txt_codigo.get()
+                messagebox.showwarning(
+                    "Aviso",
+                    "Código já cadastrado!"
+                )
 
-        self.collection.delete_one({"código": codigo})
+                return
 
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente excluído!")
+            self.collection.insert_one(
+                self.dados()
+            )
+
+            messagebox.showinfo(
+                "Sucesso",
+                "Paciente cadastrado!"
+            )
+
+            self.limpar_campos()
 
     def consultar(self):
+
         codigo = self.txt_codigo.get()
 
-        resultado = self.collection.find_one({"código": codigo})
+        resultado = self.collection.find_one(
+            {"codigo": codigo}
+        )
 
         if resultado:
-            self.limpar()
 
-            self.txt_codigo.insert(0, resultado["código"])
-            self.txt_nome.insert(0, resultado["nome"])
-            self.txt_cpf.insert(0, resultado["cpf"])
-            self.txt_idade.insert(0, resultado["idade"])
-            self.txt_end.insert(0, resultado["endereço"])
-            self.txt_bairro.insert(0, resultado["bairro"])
-            self.txt_cidade.insert(0, resultado["cidade"])
-            self.comboestado.set(resultado["estado"])
+            self.limpar_campos()
+
+            self.txt_codigo.insert(
+                0,
+                resultado["codigo"]
+            )
+
+            self.txt_nome.insert(
+                0,
+                resultado["nome"]
+            )
+
+            self.txt_cpf.insert(
+                0,
+                resultado["cpf"]
+            )
+
+            self.txt_telefone.insert(
+                0,
+                resultado["telefone"]
+            )
+
+            self.combo_sexo.set(
+                resultado["sexo"]
+            )
+
+            self.txt_convenio.insert(
+                0,
+                resultado["convenio"]
+            )
 
         else:
-            messagebox.showwarning("Aviso", "Cliente não encontrado")
+
+            messagebox.showwarning(
+                "Aviso",
+                "Paciente não encontrado!"
+            )
+
+    def alterar(self):
+
+        if self.validar_campos():
+
+            codigo = self.txt_codigo.get()
+
+            resultado = self.collection.find_one(
+                {"codigo": codigo}
+            )
+
+            if resultado:
+
+                self.collection.update_one(
+
+                    {"codigo": codigo},
+
+                    {
+                        "$set": self.dados()
+                    }
+                )
+
+                messagebox.showinfo(
+                    "Sucesso",
+                    "Paciente alterado!"
+                )
+
+                self.limpar_campos()
+
+            else:
+
+                messagebox.showwarning(
+                    "Aviso",
+                    "Paciente não encontrado!"
+                )
+
+    def apagar(self):
+
+        codigo = self.txt_codigo.get()
+
+        if codigo == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o código!"
+            )
+
+            return
+
+        resultado = self.collection.find_one(
+            {"codigo": codigo}
+        )
+
+        if resultado:
+
+            self.collection.delete_one(
+                {"codigo": codigo}
+            )
+
+            messagebox.showinfo(
+                "Sucesso",
+                "Paciente excluído!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Aviso",
+                "Paciente não encontrado!"
+            )
 
 
-# EXECUTAR
 if __name__ == "__main__":
-    CadastroClientes()
+
+    CadastroPacientes()

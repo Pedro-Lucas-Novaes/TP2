@@ -7,18 +7,10 @@ class Passagem:
 
     def __init__(self):
 
-        # =========================
-        # JANELA
-        # =========================
-
         self.tela = Tk()
         self.tela.title("CRUD Passagens")
         self.tela.geometry("1150x700")
         self.tela.configure(bg="#f2f2f2")
-
-        # =========================
-        # MONGO DB
-        # =========================
 
         self.conexao = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -27,10 +19,6 @@ class Passagem:
         self.collection = self.db["passageiros"]
 
         self.criar_componentes()
-
-    # ==================================================
-    # COMPONENTES
-    # ==================================================
 
     def criar_componentes(self):
 
@@ -124,19 +112,11 @@ class Passagem:
         self.txt_poltrona = Entry(frame, width=20, font=("Arial", 11))
         self.txt_poltrona.grid(row=6, column=1)
 
-        # =========================
-        # ÍCONES
-        # =========================
-
         self.foto_salvar = PhotoImage(file="icones/salvar.png")
         self.foto_consultar = PhotoImage(file="icones/consultar.png")
         self.foto_alterar = PhotoImage(file="icones/alterar.png")
         self.foto_excluir = PhotoImage(file="icones/excluir.png")
         self.foto_sair = PhotoImage(file="icones/sair.png")
-
-        # =========================
-        # FRAME BOTÕES
-        # =========================
 
         frame_botoes = Frame(self.tela, bg="#f2f2f2")
         frame_botoes.pack(pady=20)
@@ -241,10 +221,6 @@ class Passagem:
 
         self.btn_sair.grid(row=0, column=4, padx=10)
 
-        # =========================
-        # TABELA
-        # =========================
-
         self.tabela = ttk.Treeview(
             self.tela,
             columns=(
@@ -280,10 +256,6 @@ class Passagem:
 
         self.listar_passagens()
 
-    # ==================================================
-    # SALVAR
-    # ==================================================
-
     def salvar(self):
 
         try:
@@ -317,10 +289,6 @@ class Passagem:
                 str(erro)
             )
 
-    # ==================================================
-    # CONSULTAR
-    # ==================================================
-
     def consultar(self):
 
         rg = self.txt_rg.get()
@@ -345,10 +313,6 @@ class Passagem:
                 "Aviso",
                 "Passagem não encontrada!"
             )
-
-    # ==================================================
-    # ALTERAR
-    # ==================================================
 
     def atualizar(self):
 
@@ -379,10 +343,6 @@ class Passagem:
 
         self.listar_passagens()
 
-    # ==================================================
-    # EXCLUIR
-    # ==================================================
-
     def excluir(self):
 
         rg = self.txt_rg.get()
@@ -397,10 +357,6 @@ class Passagem:
         self.limpar()
 
         self.listar_passagens()
-
-    # ==================================================
-    # LISTAR
-    # ==================================================
 
     def listar_passagens(self):
 
@@ -426,10 +382,6 @@ class Passagem:
                 )
             )
 
-    # ==================================================
-    # LIMPAR
-    # ==================================================
-
     def limpar(self):
 
         self.txt_nome.delete(0, END)
@@ -439,10 +391,6 @@ class Passagem:
         self.txt_data.delete(0, END)
         self.txt_horario.delete(0, END)
         self.txt_poltrona.delete(0, END)
-
-    # ==================================================
-    # EXECUTAR
-    # ==================================================
 
     def executar(self):
         self.tela.mainloop()

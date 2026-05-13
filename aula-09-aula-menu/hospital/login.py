@@ -31,6 +31,7 @@ class TelaLogin:
         print(largura_screen, altura_screen)
         self.tela.geometry("%dx%d+%d+%d" % (self.largura,self.altura, posx,posy))
         self.tela.resizable(False,False)
+        self.tela.configure(bg="#6099D6")
 
 
  

@@ -7,24 +7,15 @@ class Mecanica:
 
     def __init__(self):
 
-        # =========================
-        # JANELA
-        # =========================
         self.tela = Tk()
         self.tela.title("CRUD Oficina Mecânica")
         self.tela.geometry("1100x750")
         self.tela.configure(bg="#f0f0f0")
 
-        # =========================
-        # CONEXÃO MONGO
-        # =========================
         self.conexao = pymongo.MongoClient("mongodb://localhost:27017/")
         self.db = self.conexao["oficina"]
         self.collection = self.db["servicos"]
 
-        # =========================
-        # ÍCONES
-        # =========================
         self.foto_salvar = PhotoImage(file="icones/salvar.png")
         self.foto_consultar = PhotoImage(file="icones/consultar.png")
         self.foto_alterar = PhotoImage(file="icones/alterar.png")
@@ -33,9 +24,6 @@ class Mecanica:
 
         self.criar_componentes()
 
-    # ==================================================
-    # INTERFACE
-    # ==================================================
     def criar_componentes(self):
 
         Label(
@@ -83,9 +71,6 @@ class Mecanica:
         self.txt_status = Entry(frame, width=30)
         self.txt_status.grid(row=6, column=1)
 
-        # ==================================================
-        # BOTÕES COM ÍCONES
-        # ==================================================
         frame_btn = Frame(self.tela, bg="#f0f0f0")
         frame_btn.pack(pady=10)
 
@@ -109,9 +94,6 @@ class Mecanica:
                compound=TOP, bg="#9E9E9E", fg="white",
                width=110, height=90, command=self.sair).grid(row=0, column=4, padx=8)
 
-        # ==================================================
-        # TABELA
-        # ==================================================
         self.tabela = ttk.Treeview(
             self.tela,
             columns=("cliente", "placa", "modelo", "servico", "valor", "status"),
@@ -130,9 +112,6 @@ class Mecanica:
 
         self.listar()
 
-    # ==================================================
-    # CREATE
-    # ==================================================
     def salvar(self):
 
         try:
@@ -155,9 +134,6 @@ class Mecanica:
         except Exception as e:
             messagebox.showerror("Erro", str(e))
 
-    # ==================================================
-    # READ
-    # ==================================================
     def listar(self):
 
         for i in self.tabela.get_children():
@@ -174,9 +150,6 @@ class Mecanica:
                 s.get("status")
             ))
 
-    # ==================================================
-    # CONSULTAR
-    # ==================================================
     def consultar(self):
 
         placa = self.txt_placa.get()
@@ -198,9 +171,6 @@ class Mecanica:
         else:
             messagebox.showwarning("Aviso", "Não encontrado!")
 
-    # ==================================================
-    # UPDATE
-    # ==================================================
     def atualizar(self):
 
         try:
@@ -224,9 +194,6 @@ class Mecanica:
         except Exception as e:
             messagebox.showerror("Erro", str(e))
 
-    # ==================================================
-    # DELETE
-    # ==================================================
     def excluir(self):
 
         placa = self.txt_placa.get()
@@ -237,9 +204,6 @@ class Mecanica:
         self.listar()
         self.limpar()
 
-    # ==================================================
-    # LIMPAR CAMPOS
-    # ==================================================
     def limpar(self):
 
         self.txt_cliente.delete(0, END)
@@ -250,16 +214,10 @@ class Mecanica:
         self.txt_valor.delete(0, END)
         self.txt_status.delete(0, END)
 
-    # ==================================================
-    # SAIR DO SISTEMA
-    # ==================================================
     def sair(self):
 
         if messagebox.askyesno("Confirmação", "Deseja realmente sair?"):
             self.tela.destroy()
 
-    # ==================================================
-    # EXECUTAR
-    # ==================================================
     def executar(self):
         self.tela.mainloop()

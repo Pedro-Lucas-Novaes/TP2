@@ -4,7 +4,6 @@ import tkinter as tk
 import sys
 import os
 
-
 try:
     import pymongo
 except:
@@ -12,15 +11,16 @@ except:
     import pymongo
 
 
-class CadastroClientes:
+class CadastroTratamentos:
 
     def __init__(self):
+
         self.tela = Tk()
-        self.tela.title("Exemplo Mongo DB")
+        self.tela.title("Cadastro de Tratamentos")
         self.tela.configure(bg="#ffffff")
 
-        self.largura = 700
-        self.altura = 400
+        self.largura = 750
+        self.altura = 450
 
         self.centralizar_tela()
         self.conectar_banco()
@@ -28,10 +28,10 @@ class CadastroClientes:
 
         self.tela.mainloop()
 
-  
-    # CRIANDO TELA
-   
+    # CENTRALIZAR TELA
+
     def centralizar_tela(self):
+
         largura_screen = self.tela.winfo_screenwidth()
         altura_screen = self.tela.winfo_screenheight()
 
@@ -39,85 +39,156 @@ class CadastroClientes:
         posy = int(altura_screen / 2 - self.altura / 2)
 
         self.tela.geometry(f"{self.largura}x{self.altura}+{posx}+{posy}")
-        self.tela.resizable(True, True)
 
-    
-    # CRIAR BANCO
-  
+        self.tela.resizable(False, False)
+
+    # CONEXÃO COM MONGODB
+
     def conectar_banco(self):
-        self.cliente = pymongo.MongoClient("mongodb://localhost:27017/")
-        self.db = self.cliente["exemplo"]
-        self.collection = self.db["clientes"]
 
-    
-    # COMPONENTES    
+        self.cliente = pymongo.MongoClient(
+            "mongodb://localhost:27017/"
+        )
+
+        self.db = self.cliente["exemplo"]
+
+        self.collection = self.db["tratamentos"]
+
+    # COMPONENTES
+
     def criar_componentes(self):
+
         self.criar_labels()
         self.criar_campos()
         self.criar_icones()
         self.criar_botoes()
 
+    # LABELS
+
     def criar_labels(self):
+
         Label(
             self.tela,
-            text="Cadastro de Clientes",
+            text="Cadastro de Tratamentos",
             font=("Arial", 22, "bold"),
+            bg="#ffffff",
+            fg="#2c3e50"
+        ).place(x=180, y=20)
+
+        Label(
+            self.tela,
+            text="Código:",
             bg="#ffffff"
-        ).place(x=180, y=30)
+        ).place(x=80, y=90)
 
-        Label(self.tela, text="Código:", bg="#ffffff").place(x=130, y=100)
-        Label(self.tela, text="Nome:", bg="#ffffff").place(x=130, y=130)
-        Label(self.tela, text="CPF:", bg="#ffffff").place(x=450, y=130)
-        Label(self.tela, text="Idade:", bg="#ffffff").place(x=130, y=160)
-        Label(self.tela, text="Rua:", bg="#ffffff").place(x=450, y=160)
-        Label(self.tela, text="Bairro:", bg="#ffffff").place(x=130, y=190)
-        Label(self.tela, text="Estado:", bg="#ffffff").place(x=330, y=190)
-        Label(self.tela, text="Cidade:", bg="#ffffff").place(x=520, y=190)
+        Label(
+            self.tela,
+            text="Nome do Tratamento:",
+            bg="#ffffff"
+        ).place(x=80, y=130)
 
-        self.lbl_resultado = Label(self.tela, text="", bg="#ffffff")
-        self.lbl_resultado.place(x=450, y=300)
+        Label(
+            self.tela,
+            text="Categoria:",
+            bg="#ffffff"
+        ).place(x=80, y=170)
+
+        Label(
+            self.tela,
+            text="Descrição:",
+            bg="#ffffff"
+        ).place(x=80, y=210)
+
+        Label(
+            self.tela,
+            text="Duração (min):",
+            bg="#ffffff"
+        ).place(x=80, y=250)
+
+        Label(
+            self.tela,
+            text="Valor:",
+            bg="#ffffff"
+        ).place(x=400, y=250)
+
+        Label(
+            self.tela,
+            text="Profissional:",
+            bg="#ffffff"
+        ).place(x=80, y=290)
+
+        Label(
+            self.tela,
+            text="Status:",
+            bg="#ffffff"
+        ).place(x=412, y=290)
+
+    # CAMPOS
 
     def criar_campos(self):
-        self.txt_codigo = Entry(self.tela, width=20)
-        self.txt_nome = Entry(self.tela, width=35)
-        self.txt_cpf = Entry(self.tela, width=20)
-        self.txt_idade = Entry(self.tela, width=20)
-        self.txt_end = Entry(self.tela, width=20)
-        self.txt_bairro = Entry(self.tela, width=18)
-        self.txt_cidade = Entry(self.tela, width=15)
 
-        self.comboestado = ttk.Combobox(
+        self.txt_codigo = Entry(self.tela, width=15)
+
+        self.txt_nome = Entry(self.tela, width=45)
+
+        self.txt_categoria = Entry(self.tela, width=30)
+
+        self.txt_descricao = Entry(self.tela, width=50)
+
+        self.txt_duracao = Entry(self.tela, width=15)
+
+        self.txt_valor = Entry(self.tela, width=15)
+
+        self.txt_profissional = Entry(self.tela, width=30)
+
+        self.combo_status = ttk.Combobox(
             self.tela,
-            values=[
-                "São Paulo",
-                "Rio de Janeiro",
-                "Minas Gerais",
-                "Espírito Santo"
-            ],
+            values=["Ativo", "Inativo"],
             width=15
         )
 
-        self.txt_codigo.place(x=190, y=100)
-        self.txt_nome.place(x=190, y=130)
-        self.txt_cpf.place(x=480, y=130)
-        self.txt_idade.place(x=190, y=160)
-        self.txt_end.place(x=480, y=160)
-        self.txt_bairro.place(x=190, y=190)
-        self.comboestado.place(x=380, y=190)
-        self.txt_cidade.place(x=570, y=190)
+        self.txt_codigo.place(x=230, y=90)
 
-    # ICONES
-    
+        self.txt_nome.place(x=230, y=130)
+
+        self.txt_categoria.place(x=230, y=170)
+
+        self.txt_descricao.place(x=230, y=210)
+
+        self.txt_duracao.place(x=230, y=250)
+
+        self.txt_valor.place(x=450, y=250)
+
+        self.txt_profissional.place(x=230, y=290)
+
+        self.combo_status.place(x=450, y=290)
+
+    # ÍCONES
+
     def criar_icones(self):
-        self.foto_salvar = PhotoImage(file=r"icones\salvar.png")
-        self.foto_alterar = PhotoImage(file=r"icones\alterar.png")
-        self.foto_excluir = PhotoImage(file=r"icones\excluir.png")
-        self.foto_consultar = PhotoImage(file=r"icones\consultar.png")
-        self.foto_sair = PhotoImage(file=r"icones\sair.png")
 
-    
-    # BOTOES
-   
+        self.foto_salvar = PhotoImage(
+            file=r"icones\salvar.png"
+        )
+
+        self.foto_alterar = PhotoImage(
+            file=r"icones\alterar.png"
+        )
+
+        self.foto_excluir = PhotoImage(
+            file=r"icones\excluir.png"
+        )
+
+        self.foto_consultar = PhotoImage(
+            file=r"icones\consultar.png"
+        )
+
+        self.foto_sair = PhotoImage(
+            file=r"icones\sair.png"
+        )
+
+    # BOTÕES
+
     def criar_botoes(self):
 
         Button(
@@ -126,7 +197,7 @@ class CadastroClientes:
             image=self.foto_salvar,
             compound=TOP,
             command=self.salvar
-        ).place(x=130, y=250)
+        ).place(x=120, y=350)
 
         Button(
             self.tela,
@@ -134,15 +205,7 @@ class CadastroClientes:
             image=self.foto_alterar,
             compound=TOP,
             command=self.atualizar
-        ).place(x=220, y=250)
-
-        Button(
-            self.tela,
-            text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.apagar
-        ).place(x=310, y=250)
+        ).place(x=240, y=350)
 
         Button(
             self.tela,
@@ -150,7 +213,15 @@ class CadastroClientes:
             image=self.foto_consultar,
             compound=TOP,
             command=self.consultar
-        ).place(x=400, y=250)
+        ).place(x=360, y=350)
+
+        Button(
+            self.tela,
+            text="Excluir",
+            image=self.foto_excluir,
+            compound=TOP,
+            command=self.apagar
+        ).place(x=490, y=350)
 
         Button(
             self.tela,
@@ -158,77 +229,259 @@ class CadastroClientes:
             image=self.foto_sair,
             compound=TOP,
             command=self.tela.quit
-        ).place(x=510, y=250)
+        ).place(x=610, y=350)
 
-    
-    # MÉTODOS
-    
+    # LIMPAR CAMPOS
+
     def limpar(self):
+
         self.txt_codigo.delete(0, END)
+
         self.txt_nome.delete(0, END)
-        self.txt_cpf.delete(0, END)
-        self.txt_idade.delete(0, END)
-        self.txt_end.delete(0, END)
-        self.txt_bairro.delete(0, END)
-        self.txt_cidade.delete(0, END)
-        self.comboestado.set("")
+
+        self.txt_categoria.delete(0, END)
+
+        self.txt_descricao.delete(0, END)
+
+        self.txt_duracao.delete(0, END)
+
+        self.txt_valor.delete(0, END)
+
+        self.txt_profissional.delete(0, END)
+
+        self.combo_status.set("")
+
+    # DADOS
 
     def dados(self):
+
         return {
-            "código": self.txt_codigo.get(),
+
+            "codigo": self.txt_codigo.get(),
+
             "nome": self.txt_nome.get(),
-            "idade": int(self.txt_idade.get()),
-            "cpf": self.txt_cpf.get(),
-            "endereço": self.txt_end.get(),
-            "bairro": self.txt_bairro.get(),
-            "cidade": self.txt_cidade.get(),
-            "estado": self.comboestado.get()
+
+            "categoria": self.txt_categoria.get(),
+
+            "descricao": self.txt_descricao.get(),
+
+            "duracao": self.txt_duracao.get(),
+
+            "valor": self.txt_valor.get(),
+
+            "profissional": self.txt_profissional.get(),
+
+            "status": self.combo_status.get()
         }
 
+    # VALIDAR CAMPOS
+
+    def validar_campos(self):
+
+        if self.txt_codigo.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha o código!"
+            )
+
+            self.txt_codigo.focus()
+
+            return False
+
+        elif self.txt_nome.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha o nome do tratamento!"
+            )
+
+            self.txt_nome.focus()
+
+            return False
+
+        elif self.txt_categoria.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha a categoria!"
+            )
+
+            self.txt_categoria.focus()
+
+            return False
+
+        elif self.txt_descricao.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha a descrição!"
+            )
+
+            self.txt_descricao.focus()
+
+            return False
+
+        elif self.txt_duracao.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha a duração!"
+            )
+
+            self.txt_duracao.focus()
+
+            return False
+
+        elif self.txt_valor.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha o valor!"
+            )
+
+            self.txt_valor.focus()
+
+            return False
+
+        elif self.txt_profissional.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Preencha o profissional!"
+            )
+
+            self.txt_profissional.focus()
+
+            return False
+
+        elif self.combo_status.get() == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Selecione o status!"
+            )
+
+            self.combo_status.focus()
+
+            return False
+
+        return True
+
+    # SALVAR
+
     def salvar(self):
-        self.collection.insert_one(self.dados())
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente salvo!")
 
-    def atualizar(self):
-        codigo = self.txt_codigo.get()
+        if self.validar_campos():
 
-        self.collection.update_one(
-            {"código": codigo},
-            {"$set": self.dados()}
-        )
+            self.collection.insert_one(
+                self.dados()
+            )
 
-        messagebox.showinfo("Sucesso", "Cliente atualizado!")
-
-    def apagar(self):
-        codigo = self.txt_codigo.get()
-
-        self.collection.delete_one({"código": codigo})
-
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente excluído!")
-
-    def consultar(self):
-        codigo = self.txt_codigo.get()
-
-        resultado = self.collection.find_one({"código": codigo})
-
-        if resultado:
             self.limpar()
 
-            self.txt_codigo.insert(0, resultado["código"])
-            self.txt_nome.insert(0, resultado["nome"])
-            self.txt_cpf.insert(0, resultado["cpf"])
-            self.txt_idade.insert(0, resultado["idade"])
-            self.txt_end.insert(0, resultado["endereço"])
-            self.txt_bairro.insert(0, resultado["bairro"])
-            self.txt_cidade.insert(0, resultado["cidade"])
-            self.comboestado.set(resultado["estado"])
+            messagebox.showinfo(
+                "Sucesso",
+                "Tratamento salvo com sucesso!"
+            )
+
+    # ALTERAR
+
+    def atualizar(self):
+
+        if self.validar_campos():
+
+            codigo = self.txt_codigo.get()
+
+            self.collection.update_one(
+                {"codigo": codigo},
+                {"$set": self.dados()}
+            )
+
+            messagebox.showinfo(
+                "Sucesso",
+                "Tratamento atualizado!"
+            )
+
+    # EXCLUIR
+
+    def apagar(self):
+
+        codigo = self.txt_codigo.get()
+
+        self.collection.delete_one(
+            {"codigo": codigo}
+        )
+
+        self.limpar()
+
+        messagebox.showinfo(
+            "Sucesso",
+            "Tratamento excluído!"
+        )
+
+    # CONSULTAR
+
+    def consultar(self):
+
+        codigo = self.txt_codigo.get()
+
+        resultado = self.collection.find_one(
+            {"codigo": codigo}
+        )
+
+        if resultado:
+
+            self.limpar()
+
+            self.txt_codigo.insert(
+                0,
+                resultado["codigo"]
+            )
+
+            self.txt_nome.insert(
+                0,
+                resultado["nome"]
+            )
+
+            self.txt_categoria.insert(
+                0,
+                resultado["categoria"]
+            )
+
+            self.txt_descricao.insert(
+                0,
+                resultado["descricao"]
+            )
+
+            self.txt_duracao.insert(
+                0,
+                resultado["duracao"]
+            )
+
+            self.txt_valor.insert(
+                0,
+                resultado["valor"]
+            )
+
+            self.txt_profissional.insert(
+                0,
+                resultado["profissional"]
+            )
+
+            self.combo_status.set(
+                resultado["status"]
+            )
 
         else:
-            messagebox.showwarning("Aviso", "Cliente não encontrado")
+
+            messagebox.showwarning(
+                "Aviso",
+                "Tratamento não encontrado!"
+            )
 
 
 # EXECUTAR
+
 if __name__ == "__main__":
-    CadastroClientes()
+    CadastroTratamentos()

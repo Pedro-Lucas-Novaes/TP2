@@ -7,18 +7,10 @@ class Produtos:
 
     def __init__(self):
 
-        # =========================
-        # JANELA
-        # =========================
-
         self.tela = Tk()
         self.tela.title("CRUD Produtos MongoDB")
         self.tela.geometry("1000x700")
         self.tela.configure(bg="#f0f0f0")
-
-        # =========================
-        # CONEXÃO MONGO
-        # =========================
 
         self.conexao = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -27,10 +19,6 @@ class Produtos:
         self.collection = self.db["produtos"]
 
         self.criar_componentes()
-
-    # ==================================================
-    # COMPONENTES
-    # ==================================================
 
     def criar_componentes(self):
 
@@ -111,19 +99,11 @@ class Produtos:
 
         self.txt_total.grid(row=4, column=1)
 
-        # =========================
-        # ÍCONES
-        # =========================
-
         self.foto_salvar = PhotoImage(file="icones/salvar.png")
         self.foto_consultar = PhotoImage(file="icones/consultar.png")
         self.foto_alterar = PhotoImage(file="icones/alterar.png")
         self.foto_excluir = PhotoImage(file="icones/excluir.png")
         self.foto_sair = PhotoImage(file="icones/sair.png")
-
-        # =========================
-        # FRAME BOTÕES
-        # =========================
 
         frame_botoes = Frame(self.tela, bg="#f0f0f0")
         frame_botoes.pack(pady=20)
@@ -228,10 +208,6 @@ class Produtos:
 
         self.btn_sair.grid(row=0, column=4, padx=10)
 
-        # =========================
-        # TABELA
-        # =========================
-
         self.tabela = ttk.Treeview(
             self.tela,
             columns=("codigo", "nome", "quantidade", "preco", "total"),
@@ -255,20 +231,12 @@ class Produtos:
 
         self.listar_produtos()
 
-    # ==================================================
-    # MOSTRAR TOTAL
-    # ==================================================
-
     def mostrar_total(self, valor):
 
         self.txt_total.config(state="normal")
         self.txt_total.delete(0, END)
         self.txt_total.insert(0, f"R$ {valor:.2f}")
         self.txt_total.config(state="readonly")
-
-    # ==================================================
-    # SALVAR
-    # ==================================================
 
     def salvar(self):
 
@@ -308,10 +276,6 @@ class Produtos:
                 f"Erro ao salvar:\n{erro}"
             )
 
-    # ==================================================
-    # CONSULTAR
-    # ==================================================
-
     def consultar(self):
 
         codigo = self.txt_codigo.get()
@@ -335,10 +299,6 @@ class Produtos:
                 "Aviso",
                 "Produto não encontrado!"
             )
-
-    # ==================================================
-    # ALTERAR
-    # ==================================================
 
     def atualizar(self):
 
@@ -381,10 +341,6 @@ class Produtos:
                 str(erro)
             )
 
-    # ==================================================
-    # EXCLUIR
-    # ==================================================
-
     def excluir(self):
 
         codigo = self.txt_codigo.get()
@@ -399,10 +355,6 @@ class Produtos:
         self.limpar()
 
         self.listar_produtos()
-
-    # ==================================================
-    # LISTAR
-    # ==================================================
 
     def listar_produtos(self):
 
@@ -426,10 +378,6 @@ class Produtos:
                 )
             )
 
-    # ==================================================
-    # LIMPAR
-    # ==================================================
-
     def limpar(self):
 
         self.txt_codigo.delete(0, END)
@@ -441,16 +389,6 @@ class Produtos:
         self.txt_total.delete(0, END)
         self.txt_total.config(state="readonly")
 
-    # ==================================================
-    # EXECUTAR
-    # ==================================================
-
     def executar(self):
 
         self.tela.mainloop()
-
-
-# ==================================================
-# INICIAR
-# ==================================================
-
