@@ -102,6 +102,3 @@ class Clientes:
         self.tela.mainloop()
 
 
-if __name__ == "__main__":
-    app = Clientes()
-    app.executar()
