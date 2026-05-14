@@ -7,10 +7,6 @@ class Produto:
 
     def __init__(self):
 
-        # ============================
-        # JANELA
-        # ============================
-
         self.tela = Tk()
 
         self.tela.title("Produto")
@@ -22,15 +18,7 @@ class Produto:
 
         self.centralizar_tela()
 
-        # ============================
-        # BANCO
-        # ============================
-
         self.conectar_banco()
-
-        # ============================
-        # COMPONENTES
-        # ============================
 
         self.criar_labels()
 
@@ -39,10 +27,6 @@ class Produto:
         self.criar_botoes()
 
         self.tela.mainloop()
-
-    # ============================
-    # CENTRALIZAR TELA
-    # ============================
 
     def centralizar_tela(self):
 
@@ -60,10 +44,6 @@ class Produto:
 
         self.tela.resizable(False, False)
 
-    # ============================
-    # CONEXÃO MONGODB
-    # ============================
-
     def conectar_banco(self):
 
         self.cliente = pymongo.MongoClient(
@@ -73,10 +53,6 @@ class Produto:
         self.db = self.cliente["empresa"]
 
         self.collection = self.db["produto"]
-
-    # ============================
-    # LABELS
-    # ============================
 
     def criar_labels(self):
 
@@ -122,10 +98,6 @@ class Produto:
             bg="#f0f8ff",
             font=("Arial", 12)
         ).place(x=120, y=300)
-
-    # ============================
-    # CAMPOS
-    # ============================
 
     def criar_campos(self):
 
@@ -184,10 +156,6 @@ class Produto:
             self.calcular_total
         )
 
-    # ============================
-    # BOTÕES
-    # ============================
-
     def criar_botoes(self):
 
         self.foto_salvar = PhotoImage(
@@ -218,10 +186,6 @@ class Produto:
             command=self.consultarProduto
         ).place(x=390, y=370)
 
-    # ============================
-    # CALCULAR TOTAL
-    # ============================
-
     def calcular_total(self, event=None):
 
         quantidade = self.txt_quantidade.get()
@@ -250,10 +214,6 @@ class Produto:
             self.txt_total.delete(0, END)
 
             self.txt_total.config(state="readonly")
-
-    # ============================
-    # VALIDAR CAMPOS
-    # ============================
 
     def validar_campos(self):
 
@@ -303,10 +263,6 @@ class Produto:
 
         return True
 
-    # ============================
-    # DADOS
-    # ============================
-
     def dados(self):
 
         return {
@@ -321,10 +277,6 @@ class Produto:
 
             "total": self.txt_total.get()
         }
-
-    # ============================
-    # LIMPAR CAMPOS
-    # ============================
 
     def limpar_campos(self):
 
@@ -341,10 +293,6 @@ class Produto:
         self.txt_total.delete(0, END)
 
         self.txt_total.config(state="readonly")
-
-    # ============================
-    # CADASTRAR PRODUTO
-    # ============================
 
     def cadastrarProduto(self):
 
@@ -373,10 +321,6 @@ class Produto:
             )
 
             self.limpar_campos()
-
-    # ============================
-    # CONSULTAR PRODUTO
-    # ============================
 
     def consultarProduto(self):
 
@@ -434,11 +378,6 @@ class Produto:
                 "Aviso",
                 "Produto não encontrado!"
             )
-
-
-# ============================
-# EXECUTAR
-# ============================
 
 if __name__ == "__main__":
 

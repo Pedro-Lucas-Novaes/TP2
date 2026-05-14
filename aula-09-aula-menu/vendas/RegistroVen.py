@@ -7,38 +7,28 @@ class RegistroVendas:
 
     def __init__(self):
 
-        # =====================================
-        # JANELA
-        # =====================================
-
         self.tela = Tk()
 
         self.tela.title("Registro de Vendas")
 
         self.tela.configure(bg="#f0f8ff")
 
-        self.largura = 980
-        self.altura = 720
+        self.largura = 1000
+        self.altura = 730
 
         self.centralizar_tela()
 
-        # =====================================
-        # BANCO
-        # =====================================
-
         self.conectar_banco()
-
-        # =====================================
-        # COMPONENTES
-        # =====================================
 
         self.criar_componentes()
 
+        self.carregar_produtos()
+
         self.tela.mainloop()
 
-    # =====================================
-    # CENTRALIZAR TELA
-    # =====================================
+    # ==========================================
+    # CENTRALIZAR
+    # ==========================================
 
     def centralizar_tela(self):
 
@@ -56,9 +46,9 @@ class RegistroVendas:
 
         self.tela.resizable(False, False)
 
-    # =====================================
-    # CONECTAR BANCO
-    # =====================================
+    # ==========================================
+    # BANCO
+    # ==========================================
 
     def conectar_banco(self):
 
@@ -68,25 +58,17 @@ class RegistroVendas:
 
         self.db = self.cliente["empresa"]
 
-        self.collection = self.db["vendas"]
+        self.collection_vendas = self.db["vendas"]
 
-    # =====================================
+        self.collection_produtos = self.db["produtos"]
+
+        self.collection_clientes = self.db["clientes"]
+
+    # ==========================================
     # COMPONENTES
-    # =====================================
+    # ==========================================
 
     def criar_componentes(self):
-
-        self.criar_labels()
-
-        self.criar_campos()
-
-        self.criar_botoes()
-
-    # =====================================
-    # LABELS
-    # =====================================
-
-    def criar_labels(self):
 
         Label(
             self.tela,
@@ -96,83 +78,97 @@ class RegistroVendas:
             fg="#1565c0"
         ).place(x=330, y=20)
 
-        Label(
-            self.tela,
-            text="Código da Venda:",
-            bg="#f0f8ff",
-            font=("Arial", 11)
-        ).place(x=120, y=90)
+        # ======================================
+        # LABELS
+        # ======================================
 
         Label(
             self.tela,
-            text="Cliente:",
+            text="ID Venda:",
             bg="#f0f8ff",
             font=("Arial", 11)
-        ).place(x=120, y=140)
+        ).place(x=100, y=90)
+
+        Label(
+            self.tela,
+            text="ID Produto:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).place(x=100, y=140)
 
         Label(
             self.tela,
             text="Produto:",
             bg="#f0f8ff",
             font=("Arial", 11)
-        ).place(x=120, y=190)
+        ).place(x=100, y=190)
+
+        Label(
+            self.tela,
+            text="Preço:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).place(x=520, y=190)
+
+        Label(
+            self.tela,
+            text="ID Cliente:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).place(x=100, y=240)
+
+        Label(
+            self.tela,
+            text="Cliente:",
+            bg="#f0f8ff",
+            font=("Arial", 11)
+        ).place(x=100, y=290)
 
         Label(
             self.tela,
             text="Quantidade:",
             bg="#f0f8ff",
             font=("Arial", 11)
-        ).place(x=120, y=240)
-
-        Label(
-            self.tela,
-            text="Valor Unitário:",
-            bg="#f0f8ff",
-            font=("Arial", 11)
-        ).place(x=500, y=240)
+        ).place(x=100, y=340)
 
         Label(
             self.tela,
             text="Valor Total:",
             bg="#f0f8ff",
             font=("Arial", 11)
-        ).place(x=120, y=290)
+        ).place(x=520, y=340)
 
-        Label(
+        # ======================================
+        # CAMPOS
+        # ======================================
+
+        self.txt_id_venda = Entry(
             self.tela,
-            text="Forma de Pagamento:",
-            bg="#f0f8ff",
+            width=20,
             font=("Arial", 11)
-        ).place(x=500, y=290)
+        )
 
-        Label(
+        self.txt_id_produto = Entry(
             self.tela,
-            text="Data da Venda:",
-            bg="#f0f8ff",
+            width=20,
             font=("Arial", 11)
-        ).place(x=120, y=340)
+        )
 
-        Label(
+        self.txt_produto = Entry(
             self.tela,
-            text="Vendedor:",
-            bg="#f0f8ff",
-            font=("Arial", 11)
-        ).place(x=500, y=340)
+            width=35,
+            font=("Arial", 11),
+            state="readonly"
+        )
 
-        Label(
+        self.txt_preco = Entry(
             self.tela,
-            text="Observações:",
-            bg="#f0f8ff",
-            font=("Arial", 11)
-        ).place(x=120, y=390)
+            width=20,
+            font=("Arial", 11),
+            state="readonly"
+        )
 
-    # =====================================
-    # CAMPOS
-    # =====================================
-
-    def criar_campos(self):
-
-        self.txt_codigo = Entry(
+        self.txt_id_cliente = Entry(
             self.tela,
             width=20,
             font=("Arial", 11)
@@ -180,14 +176,9 @@ class RegistroVendas:
 
         self.txt_cliente = Entry(
             self.tela,
-            width=45,
-            font=("Arial", 11)
-        )
-
-        self.txt_produto = Entry(
-            self.tela,
-            width=45,
-            font=("Arial", 11)
+            width=35,
+            font=("Arial", 11),
+            state="readonly"
         )
 
         self.txt_quantidade = Entry(
@@ -196,473 +187,321 @@ class RegistroVendas:
             font=("Arial", 11)
         )
 
-        self.txt_valor_unitario = Entry(
-            self.tela,
-            width=20,
-            font=("Arial", 11)
-        )
-
-        self.txt_valor_total = Entry(
+        self.txt_total = Entry(
             self.tela,
             width=20,
             font=("Arial", 11),
             state="readonly"
         )
 
-        self.combo_pagamento = ttk.Combobox(
-            self.tela,
-            values=[
-                "Dinheiro",
-                "Cartão Débito",
-                "Cartão Crédito",
-                "PIX",
-                "Boleto"
-            ],
-            width=25,
-            state="readonly"
+        # ======================================
+        # POSIÇÕES
+        # ======================================
+
+        self.txt_id_venda.place(x=230, y=90)
+
+        self.txt_id_produto.place(x=230, y=140)
+
+        self.txt_produto.place(x=230, y=190)
+
+        self.txt_preco.place(x=620, y=190)
+
+        self.txt_id_cliente.place(x=230, y=240)
+
+        self.txt_cliente.place(x=230, y=290)
+
+        self.txt_quantidade.place(x=230, y=340)
+
+        self.txt_total.place(x=620, y=340)
+
+        # ======================================
+        # EVENTOS
+        # ======================================
+
+        self.txt_id_produto.bind(
+            "<FocusOut>",
+            self.buscar_produto
         )
 
-        self.txt_data = Entry(
-            self.tela,
-            width=20,
-            font=("Arial", 11)
+        self.txt_id_cliente.bind(
+            "<FocusOut>",
+            self.buscar_cliente
         )
-
-        self.txt_vendedor = Entry(
-            self.tela,
-            width=30,
-            font=("Arial", 11)
-        )
-
-        self.txt_observacoes = Text(
-            self.tela,
-            width=65,
-            height=6,
-            font=("Arial", 10)
-        )
-
-        # EVENTOS PARA CALCULAR TOTAL
 
         self.txt_quantidade.bind(
             "<KeyRelease>",
             self.calcular_total
         )
 
-        self.txt_valor_unitario.bind(
-            "<KeyRelease>",
-            self.calcular_total
-        )
-
-        # POSIÇÕES
-
-        self.txt_codigo.place(x=280, y=90)
-
-        self.txt_cliente.place(x=280, y=140)
-
-        self.txt_produto.place(x=280, y=190)
-
-        self.txt_quantidade.place(x=280, y=240)
-
-        self.txt_valor_unitario.place(x=630, y=240)
-
-        self.txt_valor_total.place(x=280, y=290)
-
-        self.combo_pagamento.place(x=630, y=290)
-
-        self.txt_data.place(x=280, y=340)
-
-        self.txt_vendedor.place(x=630, y=340)
-
-        self.txt_observacoes.place(x=280, y=390)
-
-    # =====================================
-    # BOTÕES
-    # =====================================
-
-    def criar_botoes(self):
-
-        self.foto_salvar = PhotoImage(
-            file=r"icones\salvar.png"
-        )
-
-        self.foto_alterar = PhotoImage(
-            file=r"icones\alterar.png"
-        )
-
-        self.foto_consultar = PhotoImage(
-            file=r"icones\consultar.png"
-        )
-
-        self.foto_excluir = PhotoImage(
-            file=r"icones\excluir.png"
-        )
-
-        self.foto_sair = PhotoImage(
-            file=r"icones\sair.png"
-        )
+        # ======================================
+        # BOTÕES
+        # ======================================
 
         Button(
             self.tela,
             text="Salvar",
-            image=self.foto_salvar,
-            compound=TOP,
-            width=90,
-            height=90,
+            width=15,
+            bg="#2e7d32",
+            fg="white",
+            font=("Arial", 10, "bold"),
             command=self.salvar
-        ).place(x=140, y=600)
-
-        Button(
-            self.tela,
-            text="Alterar",
-            image=self.foto_alterar,
-            compound=TOP,
-            width=90,
-            height=90,
-            command=self.alterar
-        ).place(x=300, y=600)
+        ).place(x=180, y=410)
 
         Button(
             self.tela,
             text="Consultar",
-            image=self.foto_consultar,
-            compound=TOP,
-            width=90,
-            height=90,
+            width=15,
+            bg="#1565c0",
+            fg="white",
+            font=("Arial", 10, "bold"),
             command=self.consultar
-        ).place(x=460, y=600)
+        ).place(x=380, y=410)
 
         Button(
             self.tela,
             text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            width=90,
-            height=90,
+            width=15,
+            bg="#c62828",
+            fg="white",
+            font=("Arial", 10, "bold"),
             command=self.excluir
-        ).place(x=620, y=600)
+        ).place(x=580, y=410)
 
-        Button(
+        # ======================================
+        # TABELA PRODUTOS
+        # ======================================
+
+        Label(
             self.tela,
-            text="Sair",
-            image=self.foto_sair,
-            compound=TOP,
-            width=90,
-            height=90,
-            command=self.tela.destroy
-        ).place(x=780, y=600)
+            text="Produtos Cadastrados",
+            font=("Arial", 14, "bold"),
+            bg="#f0f8ff",
+            fg="#1565c0"
+        ).place(x=360, y=480)
 
-    # =====================================
+        self.tabela = ttk.Treeview(
+            self.tela,
+            columns=("id", "produto", "preco"),
+            show="headings",
+            height=8
+        )
+
+        self.tabela.heading("id", text="ID")
+
+        self.tabela.heading("produto", text="Produto")
+
+        self.tabela.heading("preco", text="Preço")
+
+        self.tabela.column("id", width=100)
+
+        self.tabela.column("produto", width=500)
+
+        self.tabela.column("preco", width=150)
+
+        self.tabela.place(x=120, y=520)
+
+    # ==========================================
+    # CARREGAR PRODUTOS
+    # ==========================================
+
+    def carregar_produtos(self):
+
+        for item in self.tabela.get_children():
+
+            self.tabela.delete(item)
+
+        produtos = self.collection_produtos.find()
+
+        for produto in produtos:
+
+            self.tabela.insert(
+                "",
+                END,
+                values=(
+                    produto["codigo"],
+                    produto["nome"],
+                    produto["preco"]
+                )
+            )
+
+    # ==========================================
+    # BUSCAR PRODUTO
+    # ==========================================
+
+    def buscar_produto(self, event=None):
+
+        codigo = self.txt_id_produto.get()
+
+        produto = self.collection_produtos.find_one(
+            {"codigo": codigo}
+        )
+
+        self.txt_produto.config(state="normal")
+
+        self.txt_preco.config(state="normal")
+
+        self.txt_produto.delete(0, END)
+
+        self.txt_preco.delete(0, END)
+
+        if produto:
+
+            self.txt_produto.insert(
+                0,
+                produto["nome"]
+            )
+
+            self.txt_preco.insert(
+                0,
+                produto["preco"]
+            )
+
+        self.txt_produto.config(state="readonly")
+
+        self.txt_preco.config(state="readonly")
+
+        self.calcular_total()
+
+    # ==========================================
+    # BUSCAR CLIENTE
+    # ==========================================
+
+    def buscar_cliente(self, event=None):
+
+        codigo = self.txt_id_cliente.get()
+
+        cliente = self.collection_clientes.find_one(
+            {"codigo": codigo}
+        )
+
+        self.txt_cliente.config(state="normal")
+
+        self.txt_cliente.delete(0, END)
+
+        if cliente:
+
+            self.txt_cliente.insert(
+                0,
+                cliente["nome"]
+            )
+
+        self.txt_cliente.config(state="readonly")
+
+    # ==========================================
     # CALCULAR TOTAL
-    # =====================================
+    # ==========================================
 
     def calcular_total(self, event=None):
 
-        quantidade = self.txt_quantidade.get()
-
-        valor = self.txt_valor_unitario.get()
-
         try:
 
-            qtd = float(quantidade)
+            qtd = float(
+                self.txt_quantidade.get()
+            )
 
-            val = float(valor)
+            preco = float(
+                self.txt_preco.get()
+            )
 
-            total = qtd * val
+            total = qtd * preco
 
-            self.txt_valor_total.config(state="normal")
+            self.txt_total.config(state="normal")
 
-            self.txt_valor_total.delete(0, END)
+            self.txt_total.delete(0, END)
 
-            self.txt_valor_total.insert(
+            self.txt_total.insert(
                 0,
                 f"{total:.2f}"
             )
 
-            self.txt_valor_total.config(state="readonly")
+            self.txt_total.config(state="readonly")
 
         except:
 
-            self.txt_valor_total.config(state="normal")
+            self.txt_total.config(state="normal")
 
-            self.txt_valor_total.delete(0, END)
+            self.txt_total.delete(0, END)
 
-            self.txt_valor_total.config(state="readonly")
+            self.txt_total.config(state="readonly")
 
-    # =====================================
-    # LIMPAR CAMPOS
-    # =====================================
-
-    def limpar_campos(self):
-
-        self.txt_codigo.delete(0, END)
-
-        self.txt_cliente.delete(0, END)
-
-        self.txt_produto.delete(0, END)
-
-        self.txt_quantidade.delete(0, END)
-
-        self.txt_valor_unitario.delete(0, END)
-
-        self.txt_valor_total.config(state="normal")
-
-        self.txt_valor_total.delete(0, END)
-
-        self.txt_valor_total.config(state="readonly")
-
-        self.combo_pagamento.set("")
-
-        self.txt_data.delete(0, END)
-
-        self.txt_vendedor.delete(0, END)
-
-        self.txt_observacoes.delete(
-            "1.0",
-            END
-        )
-
-    # =====================================
-    # VALIDAR CAMPOS
-    # =====================================
-
-    def validar_campos(self):
-
-        if self.txt_codigo.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o código da venda!"
-            )
-
-            self.txt_codigo.focus()
-
-            return False
-
-        elif self.txt_cliente.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o cliente!"
-            )
-
-            self.txt_cliente.focus()
-
-            return False
-
-        elif self.txt_produto.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o produto!"
-            )
-
-            self.txt_produto.focus()
-
-            return False
-
-        elif self.txt_quantidade.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite a quantidade!"
-            )
-
-            self.txt_quantidade.focus()
-
-            return False
-
-        elif self.txt_valor_unitario.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o valor unitário!"
-            )
-
-            self.txt_valor_unitario.focus()
-
-            return False
-
-        elif self.combo_pagamento.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Selecione a forma de pagamento!"
-            )
-
-            self.combo_pagamento.focus()
-
-            return False
-
-        elif self.txt_data.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite a data da venda!"
-            )
-
-            self.txt_data.focus()
-
-            return False
-
-        elif self.txt_vendedor.get() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o vendedor!"
-            )
-
-            self.txt_vendedor.focus()
-
-            return False
-
-        elif self.txt_observacoes.get(
-            "1.0",
-            END
-        ).strip() == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite as observações!"
-            )
-
-            self.txt_observacoes.focus()
-
-            return False
-
-        return True
-
-    # =====================================
+    # ==========================================
     # DADOS
-    # =====================================
+    # ==========================================
 
     def dados(self):
 
         return {
 
-            "codigo": self.txt_codigo.get(),
+            "id_venda": self.txt_id_venda.get(),
 
-            "cliente": self.txt_cliente.get(),
+            "id_produto": self.txt_id_produto.get(),
 
             "produto": self.txt_produto.get(),
 
+            "id_cliente": self.txt_id_cliente.get(),
+
+            "cliente": self.txt_cliente.get(),
+
+            "preco": self.txt_preco.get(),
+
             "quantidade": self.txt_quantidade.get(),
 
-            "valor_unitario": self.txt_valor_unitario.get(),
-
-            "valor_total": self.txt_valor_total.get(),
-
-            "forma_pagamento": self.combo_pagamento.get(),
-
-            "data_venda": self.txt_data.get(),
-
-            "vendedor": self.txt_vendedor.get(),
-
-            "observacoes": self.txt_observacoes.get(
-                "1.0",
-                END
-            )
+            "total": self.txt_total.get()
         }
 
-    # =====================================
+    # ==========================================
     # SALVAR
-    # =====================================
+    # ==========================================
 
     def salvar(self):
 
-        if self.validar_campos():
+        self.collection_vendas.insert_one(
+            self.dados()
+        )
 
-            existe = self.collection.find_one(
-                {"codigo": self.txt_codigo.get()}
-            )
+        messagebox.showinfo(
+            "Sucesso",
+            "Venda salva!"
+        )
 
-            if existe:
-
-                messagebox.showwarning(
-                    "Aviso",
-                    "Código já cadastrado!"
-                )
-
-                return
-
-            self.collection.insert_one(
-                self.dados()
-            )
-
-            messagebox.showinfo(
-                "Sucesso",
-                "Venda cadastrada!"
-            )
-
-            self.limpar_campos()
-
-    # =====================================
+    # ==========================================
     # CONSULTAR
-    # =====================================
+    # ==========================================
 
     def consultar(self):
 
-        codigo = self.txt_codigo.get()
+        codigo = self.txt_id_venda.get()
 
-        if codigo == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o código!"
-            )
-
-            return
-
-        resultado = self.collection.find_one(
-            {"codigo": codigo}
+        venda = self.collection_vendas.find_one(
+            {"id_venda": codigo}
         )
 
-        if resultado:
+        if venda:
 
-            self.limpar_campos()
+            self.txt_id_produto.delete(0, END)
 
-            self.txt_codigo.insert(0, resultado["codigo"])
+            self.txt_id_cliente.delete(0, END)
 
-            self.txt_cliente.insert(0, resultado["cliente"])
+            self.txt_quantidade.delete(0, END)
 
-            self.txt_produto.insert(0, resultado["produto"])
+            self.txt_id_produto.insert(
+                0,
+                venda["id_produto"]
+            )
+
+            self.txt_id_cliente.insert(
+                0,
+                venda["id_cliente"]
+            )
 
             self.txt_quantidade.insert(
                 0,
-                resultado["quantidade"]
+                venda["quantidade"]
             )
 
-            self.txt_valor_unitario.insert(
-                0,
-                resultado["valor_unitario"]
-            )
+            self.buscar_produto()
 
-            self.txt_valor_total.config(state="normal")
-
-            self.txt_valor_total.insert(
-                0,
-                resultado["valor_total"]
-            )
-
-            self.txt_valor_total.config(state="readonly")
-
-            self.combo_pagamento.set(
-                resultado["forma_pagamento"]
-            )
-
-            self.txt_data.insert(
-                0,
-                resultado["data_venda"]
-            )
-
-            self.txt_vendedor.insert(
-                0,
-                resultado["vendedor"]
-            )
-
-            self.txt_observacoes.insert(
-                "1.0",
-                resultado["observacoes"]
-            )
+            self.buscar_cliente()
 
         else:
 
@@ -671,90 +510,27 @@ class RegistroVendas:
                 "Venda não encontrada!"
             )
 
-    # =====================================
-    # ALTERAR
-    # =====================================
-
-    def alterar(self):
-
-        if self.validar_campos():
-
-            codigo = self.txt_codigo.get()
-
-            resultado = self.collection.find_one(
-                {"codigo": codigo}
-            )
-
-            if resultado:
-
-                self.collection.update_one(
-
-                    {"codigo": codigo},
-
-                    {
-                        "$set": self.dados()
-                    }
-                )
-
-                messagebox.showinfo(
-                    "Sucesso",
-                    "Venda alterada!"
-                )
-
-                self.limpar_campos()
-
-            else:
-
-                messagebox.showwarning(
-                    "Aviso",
-                    "Venda não encontrada!"
-                )
-
-    # =====================================
+    # ==========================================
     # EXCLUIR
-    # =====================================
+    # ==========================================
 
     def excluir(self):
 
-        codigo = self.txt_codigo.get()
+        codigo = self.txt_id_venda.get()
 
-        if codigo == "":
-
-            messagebox.showwarning(
-                "Aviso",
-                "Digite o código!"
-            )
-
-            return
-
-        resultado = self.collection.find_one(
-            {"codigo": codigo}
+        self.collection_vendas.delete_one(
+            {"id_venda": codigo}
         )
 
-        if resultado:
-
-            self.collection.delete_one(
-                {"codigo": codigo}
-            )
-
-            messagebox.showinfo(
-                "Sucesso",
-                "Venda excluída!"
-            )
-
-            self.limpar_campos()
-
-        else:
-
-            messagebox.showwarning(
-                "Aviso",
-                "Venda não encontrada!"
-            )
+        messagebox.showinfo(
+            "Sucesso",
+            "Venda excluída!"
+        )
 
 
-# =====================================
+# ==========================================
 # EXECUTAR
-# =====================================
+# ==========================================
 
 if __name__ == "__main__":
 
