@@ -13,8 +13,8 @@ class Produto:
 
         self.tela.configure(bg="#f0f8ff")
 
-        self.largura = 700
-        self.altura = 500
+        self.largura = 850
+        self.altura = 550
 
         self.centralizar_tela()
 
@@ -62,7 +62,7 @@ class Produto:
             font=("Arial", 24, "bold"),
             bg="#f0f8ff",
             fg="#1565c0"
-        ).place(x=280, y=20)
+        ).place(x=340, y=20)
 
         Label(
             self.tela,
@@ -134,15 +134,15 @@ class Produto:
 
         # POSIÇÕES
 
-        self.txt_codigo.place(x=260, y=100)
+        self.txt_codigo.place(x=300, y=100)
 
-        self.txt_nome.place(x=260, y=150)
+        self.txt_nome.place(x=300, y=150)
 
-        self.txt_quantidade.place(x=260, y=200)
+        self.txt_quantidade.place(x=300, y=200)
 
-        self.txt_preco.place(x=260, y=250)
+        self.txt_preco.place(x=300, y=250)
 
-        self.txt_total.place(x=260, y=300)
+        self.txt_total.place(x=300, y=300)
 
         # EVENTOS
 
@@ -162,29 +162,71 @@ class Produto:
             file=r"icones\salvar.png"
         )
 
+        self.foto_alterar = PhotoImage(
+            file=r"icones\alterar.png"
+        )
+
         self.foto_consultar = PhotoImage(
             file=r"icones\consultar.png"
         )
 
-        Button(
-            self.tela,
-            text="Cadastrar Produto",
-            image=self.foto_salvar,
-            compound=TOP,
-            width=130,
-            height=100,
-            command=self.cadastrarProduto
-        ).place(x=180, y=370)
+        self.foto_excluir = PhotoImage(
+            file=r"icones\excluir.png"
+        )
+
+        self.foto_sair = PhotoImage(
+            file=r"icones\sair.png"
+        )
 
         Button(
             self.tela,
-            text="Consultar Produto",
+            text="Salvar",
+            image=self.foto_salvar,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.cadastrarProduto
+        ).place(x=70, y=400)
+
+        Button(
+            self.tela,
+            text="Alterar",
+            image=self.foto_alterar,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.alterar
+        ).place(x=220, y=400)
+
+        Button(
+            self.tela,
+            text="Consultar",
             image=self.foto_consultar,
             compound=TOP,
-            width=130,
-            height=100,
+            width=90,
+            height=90,
             command=self.consultarProduto
-        ).place(x=390, y=370)
+        ).place(x=370, y=400)
+
+        Button(
+            self.tela,
+            text="Excluir",
+            image=self.foto_excluir,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.excluir
+        ).place(x=520, y=400)
+
+        Button(
+            self.tela,
+            text="Sair",
+            image=self.foto_sair,
+            compound=TOP,
+            width=90,
+            height=90,
+            command=self.tela.destroy
+        ).place(x=670, y=400)
 
     def calcular_total(self, event=None):
 
@@ -277,7 +319,7 @@ class Produto:
 
             "total": self.txt_total.get()
         }
-
+    
     def limpar_campos(self):
 
         self.txt_codigo.delete(0, END)
@@ -371,6 +413,78 @@ class Produto:
             )
 
             self.txt_total.config(state="readonly")
+
+        else:
+
+            messagebox.showwarning(
+                "Aviso",
+                "Produto não encontrado!"
+            )
+
+    def alterar(self):
+
+        if self.validar_campos():
+
+            codigo = self.txt_codigo.get()
+
+            resultado = self.collection.find_one(
+                {"codigo": codigo}
+            )
+
+            if resultado:
+
+                self.collection.update_one(
+
+                    {"codigo": codigo},
+
+                    {
+                        "$set": self.dados()
+                    }
+                )
+
+                messagebox.showinfo(
+                    "Sucesso",
+                    "Produto alterado!"
+                )
+
+                self.limpar_campos()
+
+            else:
+
+                messagebox.showwarning(
+                    "Aviso",
+                    "Produto não encontrado!"
+                )
+
+    def excluir(self):
+
+        codigo = self.txt_codigo.get()
+
+        if codigo == "":
+
+            messagebox.showwarning(
+                "Aviso",
+                "Digite o código!"
+            )
+
+            return
+
+        resultado = self.collection.find_one(
+            {"codigo": codigo}
+        )
+
+        if resultado:
+
+            self.collection.delete_one(
+                {"codigo": codigo}
+            )
+
+            messagebox.showinfo(
+                "Sucesso",
+                "Produto excluído!"
+            )
+
+            self.limpar_campos()
 
         else:
 

@@ -84,6 +84,7 @@ class TelaMenuSistema:
         barra_menus.add_cascade(label="Gestão", menu=opçoes_menus_gestao)
         opçoes_menus_gestao.add_command(label="Cadastro de Clientes", command=self.abrir_CadastroCli)
         opçoes_menus_gestao.add_command(label="Cadastro de Produtos",command=self.abrir_CadastroPro)
+        opçoes_menus_gestao.add_command(label="Cadastro de Produtos",command=self.abrir_RegistroVen)
         self.tela.config(menu=barra_menus)
 
 
@@ -113,7 +114,8 @@ class TelaMenuSistema:
 
         Button(self.tela,text="Cadastro de Produtos",image=self.CadastroPro,compound="top",command=self.abrir_CadastroPro,width=115).place(x=320, y=200)
 
-        Button(self.tela,text="Registro de Vendas",image=self.RegistroVen,compound="top",command=self.RegistroVen_msg,width=115).place(x=540, y=200)
+        Button(self.tela,text="Registro de Vendas",image=self.RegistroVen,
+        compound="top",command=self.abrir_RegistroVen,width=115).place(x=540, y=200)
 
         Button(self.tela,text="Logout",image=self.logout_img,compound="top",command=self.logout,width=115).place(x=760, y=200)
 
@@ -124,13 +126,14 @@ class TelaMenuSistema:
     
     def abrir_CadastroCli(self):
         subprocess.run([sys.executable, "CadastroCli.py"])
+
+    def abrir_RegistroVen(self):
+        subprocess.run([sys.executable, "RegistroVen.py"])
     
     def logout(self):
         self.tela.destroy()
         subprocess.run([sys.executable, "login.py"])
     
-    def RegistroVen_msg(self):
-        messagebox.showinfo("Registro de Vendas", "Tela em Desenvolvimento")
 
    
 
