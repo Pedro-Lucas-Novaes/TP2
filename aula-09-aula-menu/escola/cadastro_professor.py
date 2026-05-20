@@ -1,234 +1,326 @@
 from tkinter import *
-from tkinter import ttk, messagebox
-import tkinter as tk
-import sys
-import os
+from tkinter import messagebox
+from pymongo import MongoClient
 
 
-try:
-    import pymongo
-except:
-    os.system(f'"{sys.executable}" -m pip install pymongo')
-    import pymongo
-
-
-class CadastroClientes:
+class TelaProfessores:
 
     def __init__(self):
-        self.tela = Tk()
-        self.tela.title("Exemplo Mongo DB")
-        self.tela.configure(bg="#ffffff")
 
-        self.largura = 700
-        self.altura = 400
+        # ================= CONEXÃO MONGODB =================
 
-        self.centralizar_tela()
-        self.conectar_banco()
-        self.criar_componentes()
-
-        self.tela.mainloop()
-
-  
-    # CRIANDO TELA
-   
-    def centralizar_tela(self):
-        largura_screen = self.tela.winfo_screenwidth()
-        altura_screen = self.tela.winfo_screenheight()
-
-        posx = int(largura_screen / 2 - self.largura / 2)
-        posy = int(altura_screen / 2 - self.altura / 2)
-
-        self.tela.geometry(f"{self.largura}x{self.altura}+{posx}+{posy}")
-        self.tela.resizable(True, True)
-
-    
-    # CRIAR BANCO
-  
-    def conectar_banco(self):
-        self.cliente = pymongo.MongoClient("mongodb://localhost:27017/")
-        self.db = self.cliente["exemplo"]
-        self.collection = self.db["clientes"]
-
-    
-    # COMPONENTES    
-    def criar_componentes(self):
-        self.criar_labels()
-        self.criar_campos()
-        self.criar_icones()
-        self.criar_botoes()
-
-    def criar_labels(self):
-        Label(
-            self.tela,
-            text="Cadastro de Clientes",
-            font=("Arial", 22, "bold"),
-            bg="#ffffff"
-        ).place(x=180, y=30)
-
-        Label(self.tela, text="Código:", bg="#ffffff").place(x=130, y=100)
-        Label(self.tela, text="Nome:", bg="#ffffff").place(x=130, y=130)
-        Label(self.tela, text="CPF:", bg="#ffffff").place(x=450, y=130)
-        Label(self.tela, text="Idade:", bg="#ffffff").place(x=130, y=160)
-        Label(self.tela, text="Rua:", bg="#ffffff").place(x=450, y=160)
-        Label(self.tela, text="Bairro:", bg="#ffffff").place(x=130, y=190)
-        Label(self.tela, text="Estado:", bg="#ffffff").place(x=330, y=190)
-        Label(self.tela, text="Cidade:", bg="#ffffff").place(x=520, y=190)
-
-        self.lbl_resultado = Label(self.tela, text="", bg="#ffffff")
-        self.lbl_resultado.place(x=450, y=300)
-
-    def criar_campos(self):
-        self.txt_codigo = Entry(self.tela, width=20)
-        self.txt_nome = Entry(self.tela, width=35)
-        self.txt_cpf = Entry(self.tela, width=20)
-        self.txt_idade = Entry(self.tela, width=20)
-        self.txt_end = Entry(self.tela, width=20)
-        self.txt_bairro = Entry(self.tela, width=18)
-        self.txt_cidade = Entry(self.tela, width=15)
-
-        self.comboestado = ttk.Combobox(
-            self.tela,
-            values=[
-                "São Paulo",
-                "Rio de Janeiro",
-                "Minas Gerais",
-                "Espírito Santo"
-            ],
-            width=15
+        self.cliente = MongoClient(
+            "mongodb://localhost:27017/"
         )
 
-        self.txt_codigo.place(x=190, y=100)
-        self.txt_nome.place(x=190, y=130)
-        self.txt_cpf.place(x=480, y=130)
-        self.txt_idade.place(x=190, y=160)
-        self.txt_end.place(x=480, y=160)
-        self.txt_bairro.place(x=190, y=190)
-        self.comboestado.place(x=380, y=190)
-        self.txt_cidade.place(x=570, y=190)
+        self.banco = self.cliente["escola"]
 
-    # ICONES
-    
-    def criar_icones(self):
-        self.foto_salvar = PhotoImage(file=r"icones\salvar.png")
-        self.foto_alterar = PhotoImage(file=r"icones\alterar.png")
-        self.foto_excluir = PhotoImage(file=r"icones\excluir.png")
-        self.foto_consultar = PhotoImage(file=r"icones\consultar.png")
-        self.foto_sair = PhotoImage(file=r"icones\sair.png")
+        self.colecao = self.banco["professores"]
 
-    
-    # BOTOES
-   
-    def criar_botoes(self):
+        # ================= TELA =================
+
+        self.tela = Tk()
+        self.tela.title("Cadastro de Professores")
+        self.tela.geometry("750x500")
+        self.tela.resizable(False, False)
+
+        # ================= TÍTULO =================
+
+        Label(
+            self.tela,
+            text="Cadastro de Professores",
+            font=("Arial", 22, "bold"),
+            fg="blue"
+        ).place(x=180, y=20)
+
+        # ================= LABELS =================
+
+        Label(self.tela, text="Código:").place(x=100, y=100)
+        Label(self.tela, text="Nome Professor:").place(x=100, y=150)
+        Label(self.tela, text="Disciplina:").place(x=100, y=200)
+        Label(self.tela, text="Qtd Aulas Semanais:").place(x=100, y=250)
+        Label(self.tela, text="Formação:").place(x=100, y=300)
+
+        # ================= CAMPOS =================
+
+        self.codigo = Entry(self.tela, width=20)
+        self.nome = Entry(self.tela, width=40)
+        self.disciplina = Entry(self.tela, width=40)
+        self.aulas = Entry(self.tela, width=20)
+        self.formacao = Entry(self.tela, width=40)
+
+        self.codigo.place(x=300, y=100)
+        self.nome.place(x=300, y=150)
+        self.disciplina.place(x=300, y=200)
+        self.aulas.place(x=300, y=250)
+        self.formacao.place(x=300, y=300)
+
+        # ================= ÍCONES =================
+
+        self.img_salvar = PhotoImage(file="icones/salvar.png")
+        self.img_consultar = PhotoImage(file="icones/consultar.png")
+        self.img_alterar = PhotoImage(file="icones/alterar.png")
+        self.img_excluir = PhotoImage(file="icones/excluir.png")
+
+        # ================= BOTÕES =================
 
         Button(
             self.tela,
-            text="Salvar",
-            image=self.foto_salvar,
+            text="Cadastrar",
+            image=self.img_salvar,
             compound=TOP,
-            command=self.salvar
-        ).place(x=130, y=250)
-
-        Button(
-            self.tela,
-            text="Alterar",
-            image=self.foto_alterar,
-            compound=TOP,
-            command=self.atualizar
-        ).place(x=220, y=250)
-
-        Button(
-            self.tela,
-            text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.apagar
-        ).place(x=310, y=250)
+            command=self.cadastrar
+        ).place(x=120, y=380)
 
         Button(
             self.tela,
             text="Consultar",
-            image=self.foto_consultar,
+            image=self.img_consultar,
             compound=TOP,
             command=self.consultar
-        ).place(x=400, y=250)
+        ).place(x=260, y=380)
 
         Button(
             self.tela,
-            text="Sair",
-            image=self.foto_sair,
+            text="Editar",
+            image=self.img_alterar,
             compound=TOP,
-            command=self.tela.quit
-        ).place(x=510, y=250)
+            command=self.editar
+        ).place(x=400, y=380)
 
-    
-    # MÉTODOS
-    
-    def limpar(self):
-        self.txt_codigo.delete(0, END)
-        self.txt_nome.delete(0, END)
-        self.txt_cpf.delete(0, END)
-        self.txt_idade.delete(0, END)
-        self.txt_end.delete(0, END)
-        self.txt_bairro.delete(0, END)
-        self.txt_cidade.delete(0, END)
-        self.comboestado.set("")
+        Button(
+            self.tela,
+            text="Excluir",
+            image=self.img_excluir,
+            compound=TOP,
+            command=self.excluir
+        ).place(x=540, y=380)
 
-    def dados(self):
-        return {
-            "código": self.txt_codigo.get(),
-            "nome": self.txt_nome.get(),
-            "idade": int(self.txt_idade.get()),
-            "cpf": self.txt_cpf.get(),
-            "endereço": self.txt_end.get(),
-            "bairro": self.txt_bairro.get(),
-            "cidade": self.txt_cidade.get(),
-            "estado": self.comboestado.get()
+        self.tela.mainloop()
+
+    # ================= CADASTRAR =================
+
+    def cadastrar(self):
+
+        codigo = self.codigo.get()
+        nome = self.nome.get()
+        disciplina = self.disciplina.get()
+        aulas = self.aulas.get()
+        formacao = self.formacao.get()
+
+        # VALIDAR CAMPOS
+
+        if (
+            codigo == "" or
+            nome == "" or
+            disciplina == "" or
+            aulas == "" or
+            formacao == ""
+        ):
+
+            messagebox.showerror(
+                "Erro",
+                "Preencha todos os campos!"
+            )
+
+            return
+
+        # VERIFICAR DUPLICADO
+
+        professor_existente = self.colecao.find_one({
+            "codigo": codigo
+        })
+
+        if professor_existente:
+
+            messagebox.showwarning(
+                "Cadastro",
+                "Já existe um professor com esse código!"
+            )
+
+            return
+
+        # INSERIR
+
+        professor = {
+
+            "codigo": codigo,
+            "nome": nome,
+            "disciplina": disciplina,
+            "aulas_semanais": aulas,
+            "formacao": formacao
+
         }
 
-    def salvar(self):
-        self.collection.insert_one(self.dados())
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente salvo!")
+        self.colecao.insert_one(professor)
 
-    def atualizar(self):
-        codigo = self.txt_codigo.get()
-
-        self.collection.update_one(
-            {"código": codigo},
-            {"$set": self.dados()}
+        messagebox.showinfo(
+            "Cadastro",
+            "Professor cadastrado com sucesso!"
         )
 
-        messagebox.showinfo("Sucesso", "Cliente atualizado!")
+        self.limpar_campos()
 
-    def apagar(self):
-        codigo = self.txt_codigo.get()
-
-        self.collection.delete_one({"código": codigo})
-
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente excluído!")
+    # ================= CONSULTAR =================
 
     def consultar(self):
-        codigo = self.txt_codigo.get()
 
-        resultado = self.collection.find_one({"código": codigo})
+        codigo = self.codigo.get()
 
-        if resultado:
-            self.limpar()
+        if codigo == "":
 
-            self.txt_codigo.insert(0, resultado["código"])
-            self.txt_nome.insert(0, resultado["nome"])
-            self.txt_cpf.insert(0, resultado["cpf"])
-            self.txt_idade.insert(0, resultado["idade"])
-            self.txt_end.insert(0, resultado["endereço"])
-            self.txt_bairro.insert(0, resultado["bairro"])
-            self.txt_cidade.insert(0, resultado["cidade"])
-            self.comboestado.set(resultado["estado"])
+            messagebox.showerror(
+                "Erro",
+                "Digite o código!"
+            )
+
+            return
+
+        professor = self.colecao.find_one({
+            "codigo": codigo
+        })
+
+        if professor:
+
+            self.nome.delete(0, END)
+            self.nome.insert(0, professor["nome"])
+
+            self.disciplina.delete(0, END)
+            self.disciplina.insert(
+                0,
+                professor["disciplina"]
+            )
+
+            self.aulas.delete(0, END)
+            self.aulas.insert(
+                0,
+                professor["aulas_semanais"]
+            )
+
+            self.formacao.delete(0, END)
+            self.formacao.insert(
+                0,
+                professor["formacao"]
+            )
+
+            messagebox.showinfo(
+                "Consulta",
+                "Professor encontrado!"
+            )
 
         else:
-            messagebox.showwarning("Aviso", "Cliente não encontrado")
+
+            messagebox.showwarning(
+                "Consulta",
+                "Professor não encontrado!"
+            )
+
+    # ================= EDITAR =================
+
+    def editar(self):
+
+        codigo = self.codigo.get()
+        nome = self.nome.get()
+        disciplina = self.disciplina.get()
+        aulas = self.aulas.get()
+        formacao = self.formacao.get()
+
+        # VALIDAR CAMPOS
+
+        if (
+            codigo == "" or
+            nome == "" or
+            disciplina == "" or
+            aulas == "" or
+            formacao == ""
+        ):
+
+            messagebox.showerror(
+                "Erro",
+                "Preencha todos os campos!"
+            )
+
+            return
+
+        resultado = self.colecao.update_one(
+
+            {"codigo": codigo},
+
+            {
+                "$set": {
+
+                    "nome": nome,
+                    "disciplina": disciplina,
+                    "aulas_semanais": aulas,
+                    "formacao": formacao
+
+                }
+            }
+        )
+
+        if resultado.modified_count > 0:
+
+            messagebox.showinfo(
+                "Editar",
+                "Professor alterado com sucesso!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Editar",
+                "Professor não encontrado!"
+            )
+
+    # ================= EXCLUIR =================
+
+    def excluir(self):
+
+        codigo = self.codigo.get()
+
+        if codigo == "":
+
+            messagebox.showerror(
+                "Erro",
+                "Digite o código!"
+            )
+
+            return
+
+        resultado = self.colecao.delete_one({
+            "codigo": codigo
+        })
+
+        if resultado.deleted_count > 0:
+
+            messagebox.showinfo(
+                "Excluir",
+                "Professor excluído!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Excluir",
+                "Professor não encontrado!"
+            )
+
+    # ================= LIMPAR CAMPOS =================
+
+    def limpar_campos(self):
+
+        self.codigo.delete(0, END)
+        self.nome.delete(0, END)
+        self.disciplina.delete(0, END)
+        self.aulas.delete(0, END)
+        self.formacao.delete(0, END)
 
 
-# EXECUTAR
+# ================= EXECUTAR =================
+
 if __name__ == "__main__":
-    CadastroClientes()
+    TelaProfessores()

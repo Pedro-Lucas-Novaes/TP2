@@ -85,7 +85,6 @@ class TelaMenuSistema:
         opçoes_menus_gestao.add_command(label="Cadastro de Alunos", command=self.abrir_cadastro_aluno)
         opçoes_menus_gestao.add_command(label="Cadastro de Professores",command=self.abrir_cadastro_professor)
         opçoes_menus_gestao.add_command(label="Cadastro de Notas",command=self.abrir_cadastro_notas)
-        opçoes_menus_gestao.add_command(label="Calculo da Media",command=self.abrir_calculo_media)
         self.tela.config(menu=barra_menus)
 
 
@@ -95,7 +94,6 @@ class TelaMenuSistema:
         self.aluno = self.carregar_png(r"icones\cadastro_aluno.png", 80, 80)
         self.professor = self.carregar_png(r"icones\cadastro_professor.png", 80, 80)
         self.notas = self.carregar_png(r"icones\cadastro_notas.png", 80, 80)
-        self.media = self.carregar_png(r"icones\calculo_media.png", 80, 80)
         self.logout_img = self.carregar_png(r"icones\logout.png", 80, 80)
 
     def carregar_png(self, caminho, largura, altura):
@@ -115,9 +113,7 @@ class TelaMenuSistema:
 
         Button(self.tela,text="Cadastro de Notas",image=self.notas,compound="top",command=self.abrir_cadastro_notas,width=125).place(x=540, y=200)
 
-        Button(self.tela,text="Calculo de Medias",image=self.media,compound="top",command=self.abrir_calculo_media, width=125).place(x=760, y=200)
-
-        Button(self.tela,text="Logout",image=self.logout_img,compound="top",command=self.logout,width=100).place(x=880, y=560)
+        Button(self.tela,text="Logout",image=self.logout_img,compound="top",command=self.logout,width=100).place(x=760, y=200)
 
  
     # MÉTODOS PARA CHAMAR TELAS
@@ -129,9 +125,6 @@ class TelaMenuSistema:
 
     def abrir_cadastro_notas(self):
         subprocess.run([sys.executable, "cadastro_notas.py"])
-
-    def abrir_calculo_media(self):
-        subprocess.run([sys.executable, "calculo_media.py"])
     
     def logout(self):
         self.tela.destroy()

@@ -1,216 +1,326 @@
 from tkinter import *
-from tkinter import ttk, filedialog, messagebox
-from PIL import Image, ImageTk
+from tkinter import messagebox
+from pymongo import MongoClient
 
 
-class GestaoAnimais:
+class TelaAlunos:
+
     def __init__(self):
+
+        # ================= CONEXÃO MONGODB =================
+
+        self.cliente = MongoClient(
+            "mongodb://localhost:27017/"
+        )
+
+        self.banco = self.cliente["escola"]
+
+        self.colecao = self.banco["alunos"]
+
+        # ================= TELA =================
+
         self.tela = Tk()
-        self.tela.title("Gestão de Animais")
+        self.tela.title("Cadastro de Alunos")
+        self.tela.geometry("750x500")
+        self.tela.resizable(False, False)
 
-        self.largura = 700
-        self.altura = 400
-        self.pasta_inicial = ""
+        # ================= TÍTULO =================
 
-        self.var_sexo = StringVar()
-        self.var_sexo.set("m")
-
-        self.centralizar_tela()
-        self.criar_componentes()
-
-
-        self.tela.mainloop()
-
-   
-    # CONFIGURAÇÕES DA TELA
-
-    def centralizar_tela(self):
-      
-        largura_screen = self.tela.winfo_screenwidth()
-        altura_screen = self.tela.winfo_screenheight()
-        posx = largura_screen/2 - self.largura/2
-        posy = altura_screen/2 - self.altura/2
-        print(largura_screen, altura_screen)
-        self.tela.geometry("%dx%d+%d+%d" % (self.largura,self.altura, posx,posy))
-        self.tela.resizable(False,False)
-
-
-  
-    # COMPONENTES
-
-    def criar_componentes(self):
-        self.criar_labels()
-        self.criar_campos()
-        self.criar_botoes()
-   
-
-    def criar_labels(self):
-        Label(self.tela, text="Código:").place(x=130, y=50)
-        Label(self.tela, text="Nome:").place(x=130, y=80)
-        Label(self.tela, text="Idade").place(x=510, y=80)
-        Label(self.tela, text="Sexo").place(x=130, y=110)
-        Label(self.tela, text="Raça").place(x=260, y=110)
-        Label(self.tela, text="Peso").place(x=380, y=110)
-        Label(self.tela, text="Espécie").place(x=510, y=110)
-        Label(self.tela, text="Data Nascimento").place(x=130, y=140)
-        Label(self.tela, text="Data Cadastro").place(x=380, y=140)
-        Label(self.tela, text="Data Atualização").place(x=130, y=170)
-        Label(self.tela, text="Descrição").place(x=130, y=200)
-
-    def criar_campos(self):
-        self.txt_codigo = Entry(self.tela, width=10)
-        self.txt_nome = Entry(self.tela, width=50)
-        self.txt_idade = Entry(self.tela, width=20)
-        self.txt_raca = Entry(self.tela, width=10)
-        self.txt_peso = Entry(self.tela, width=10)
-
-        self.cmb_especie = ttk.Combobox(
+        Label(
             self.tela,
-            values=["Vira-Lata", "Beagle", "Pastor ALemão"],
-            width=10
-        )
+            text="Cadastro de Alunos",
+            font=("Arial", 22, "bold"),
+            fg="blue"
+        ).place(x=220, y=20)
 
-        self.txt_data_nascimento = Entry(self.tela, width=20)
-        self.txt_data_cadastro = Entry(self.tela, width=20)
-        self.txt_data_atualizacao = Entry(self.tela, width=20)
-        self.txt_descricao = Text(self.tela, width=50, height=5)
+        # ================= LABELS =================
 
-        self.rdb_m = Radiobutton(
-            self.tela,
-            text="M",
-            variable=self.var_sexo,
-            value="m"
-        )
+        Label(self.tela, text="Código:").place(x=100, y=100)
+        Label(self.tela, text="Nome do Aluno:").place(x=100, y=150)
+        Label(self.tela, text="Data Nascimento:").place(x=100, y=200)
+        Label(self.tela, text="Endereço:").place(x=100, y=250)
+        Label(self.tela, text="Telefone:").place(x=100, y=300)
 
-        self.rdb_f = Radiobutton(
-            self.tela,
-            text="F",
-            variable=self.var_sexo,
-            value="f"
-        )
+        # ================= CAMPOS =================
 
-        # POSIÇÕES
-        self.txt_codigo.place(x=180, y=50)
-        self.txt_nome.place(x=180, y=80)
-        self.txt_idade.place(x=560, y=80)
-        self.rdb_m.place(x=180, y=110)
-        self.rdb_f.place(x=220, y=110)
-        self.txt_raca.place(x=300, y=110)
-        self.txt_peso.place(x=420, y=110)
-        self.cmb_especie.place(x=560, y=110)
+        self.codigo = Entry(self.tela, width=20)
+        self.nome = Entry(self.tela, width=40)
+        self.data = Entry(self.tela, width=30)
+        self.endereco = Entry(self.tela, width=40)
+        self.telefone = Entry(self.tela, width=30)
 
-        self.txt_data_nascimento.place(x=240, y=140)
-        self.txt_data_cadastro.place(x=470, y=140)
-        self.txt_data_atualizacao.place(x=240, y=170)
-        self.txt_descricao.place(x=190, y=205)
+        self.codigo.place(x=250, y=100)
+        self.nome.place(x=250, y=150)
+        self.data.place(x=250, y=200)
+        self.endereco.place(x=250, y=250)
+        self.telefone.place(x=250, y=300)
 
-      
+        # ================= ÍCONES =================
 
-    def criar_botoes(self):
+        self.img_salvar = PhotoImage(file="icones/salvar.png")
+        self.img_consultar = PhotoImage(file="icones/consultar.png")
+        self.img_alterar = PhotoImage(file="icones/alterar.png")
+        self.img_excluir = PhotoImage(file="icones/excluir.png")
 
-        self.foto_salvar = PhotoImage(file=r"icones\salvar.png")
-        self.foto_excluir = PhotoImage(file=r"icones\excluir.png")
-        self.foto_alterar = PhotoImage(file=r"icones\alterar.png")
-        self.foto_consultar = PhotoImage(file=r"icones\consultar.png")
-        self.foto_sair = PhotoImage(file=r"icones\sair.png")
+        # ================= BOTÕES =================
 
         Button(
             self.tela,
-            text="Escolher imagem",
-            command=self.escolher_imagem
-        ).place(x=10, y=140)
-
-        self.btn_salvar = Button(
-            self.tela,
-            text="Salvar",
-            image=self.foto_salvar,
+            text="Cadastrar",
+            image=self.img_salvar,
             compound=TOP,
-            command=self.salvar
-        )
+            command=self.cadastrar
+        ).place(x=120, y=380)
 
-        self.btn_excluir = Button(
-            self.tela,
-            text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.excluir
-        )
-
-        self.btn_alterar = Button(
-            self.tela,
-            text="Alterar",
-            image=self.foto_alterar,
-            compound=TOP,
-            command=self.alterar
-        )
-
-        self.btn_consultar = Button(
+        Button(
             self.tela,
             text="Consultar",
-            image=self.foto_consultar,
+            image=self.img_consultar,
             compound=TOP,
             command=self.consultar
-        )
+        ).place(x=260, y=380)
 
-        self.btn_sair = Button(
+        Button(
             self.tela,
-            text="Sair",
-            image=self.foto_sair,
-            compound=RIGHT,
-            command=self.tela.destroy
-        )
+            text="Editar",
+            image=self.img_alterar,
+            compound=TOP,
+            command=self.editar
+        ).place(x=400, y=380)
 
-        self.btn_salvar.place(x=130, y=310)
-        self.btn_excluir.place(x=200, y=310)
-        self.btn_alterar.place(x=270, y=310)
-        self.btn_consultar.place(x=340, y=310)
-        self.btn_sair.place(x=620, y=340)
-    
-    # FUNÇÕES
+        Button(
+            self.tela,
+            text="Excluir",
+            image=self.img_excluir,
+            compound=TOP,
+            command=self.excluir
+        ).place(x=540, y=380)
 
-    def escolher_imagem(self):
-        caminho = filedialog.askopenfilename(
-            initialdir=self.pasta_inicial,
-            title="Escolha uma imagem",
-            filetypes=(
-                ("Arquivos de imagem", "*.jpg;*.jpeg;*.png"),
-                ("Todos os arquivos", "*.*")
+        self.tela.mainloop()
+
+    # ================= CADASTRAR =================
+
+    def cadastrar(self):
+
+        codigo = self.codigo.get()
+        nome = self.nome.get()
+        data = self.data.get()
+        endereco = self.endereco.get()
+        telefone = self.telefone.get()
+
+        # VALIDAR CAMPOS
+
+        if (
+            codigo == "" or
+            nome == "" or
+            data == "" or
+            endereco == "" or
+            telefone == ""
+        ):
+
+            messagebox.showerror(
+                "Erro",
+                "Preencha todos os campos!"
             )
+
+            return
+
+        # VERIFICAR DUPLICADO
+
+        aluno_existente = self.colecao.find_one({
+            "codigo": codigo
+        })
+
+        if aluno_existente:
+
+            messagebox.showwarning(
+                "Cadastro",
+                "Já existe um aluno com esse código!"
+            )
+
+            return
+
+        # INSERIR
+
+        aluno = {
+
+            "codigo": codigo,
+            "nome": nome,
+            "data_nascimento": data,
+            "endereco": endereco,
+            "telefone": telefone
+
+        }
+
+        self.colecao.insert_one(aluno)
+
+        messagebox.showinfo(
+            "Cadastro",
+            "Aluno cadastrado com sucesso!"
         )
 
-        if caminho:
-            imagem = Image.open(caminho)
-            largura, altura = imagem.size
+        self.limpar_campos()
 
-            if largura > 150:
-                proporcao = largura / 150
-                nova_altura = int(altura / proporcao)
-                imagem = imagem.resize((110, nova_altura))
-
-            imagem_tk = ImageTk.PhotoImage(imagem)
-
-            self.lbl_imagem = Label(self.tela, image=imagem_tk)
-            self.lbl_imagem.image = imagem_tk
-            self.lbl_imagem.place(x=10, y=50)
-
-  
-
-  
-    # AÇÕES DOS BOTÕES
-  
-    def salvar(self):
-        messagebox.showinfo("Salvar", "Registro salvo com sucesso!")
-
-    def excluir(self):
-        messagebox.showinfo("Excluir", "Registro excluído!")
-
-    def alterar(self):
-        messagebox.showinfo("Alterar", "Registro alterado!")
+    # ================= CONSULTAR =================
 
     def consultar(self):
-        messagebox.showinfo("Consultar", "Consulta realizada!")
+
+        codigo = self.codigo.get()
+
+        if codigo == "":
+
+            messagebox.showerror(
+                "Erro",
+                "Digite o código!"
+            )
+
+            return
+
+        aluno = self.colecao.find_one({
+            "codigo": codigo
+        })
+
+        if aluno:
+
+            self.nome.delete(0, END)
+            self.nome.insert(0, aluno["nome"])
+
+            self.data.delete(0, END)
+            self.data.insert(
+                0,
+                aluno["data_nascimento"]
+            )
+
+            self.endereco.delete(0, END)
+            self.endereco.insert(
+                0,
+                aluno["endereco"]
+            )
+
+            self.telefone.delete(0, END)
+            self.telefone.insert(
+                0,
+                aluno["telefone"]
+            )
+
+            messagebox.showinfo(
+                "Consulta",
+                "Aluno encontrado!"
+            )
+
+        else:
+
+            messagebox.showwarning(
+                "Consulta",
+                "Aluno não encontrado!"
+            )
+
+    # ================= EDITAR =================
+
+    def editar(self):
+
+        codigo = self.codigo.get()
+        nome = self.nome.get()
+        data = self.data.get()
+        endereco = self.endereco.get()
+        telefone = self.telefone.get()
+
+        # VALIDAR CAMPOS
+
+        if (
+            codigo == "" or
+            nome == "" or
+            data == "" or
+            endereco == "" or
+            telefone == ""
+        ):
+
+            messagebox.showerror(
+                "Erro",
+                "Preencha todos os campos!"
+            )
+
+            return
+
+        resultado = self.colecao.update_one(
+
+            {"codigo": codigo},
+
+            {
+                "$set": {
+
+                    "nome": nome,
+                    "data_nascimento": data,
+                    "endereco": endereco,
+                    "telefone": telefone
+
+                }
+            }
+        )
+
+        if resultado.modified_count > 0:
+
+            messagebox.showinfo(
+                "Editar",
+                "Aluno alterado com sucesso!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Editar",
+                "Aluno não encontrado!"
+            )
+
+    # ================= EXCLUIR =================
+
+    def excluir(self):
+
+        codigo = self.codigo.get()
+
+        if codigo == "":
+
+            messagebox.showerror(
+                "Erro",
+                "Digite o código!"
+            )
+
+            return
+
+        resultado = self.colecao.delete_one({
+            "codigo": codigo
+        })
+
+        if resultado.deleted_count > 0:
+
+            messagebox.showinfo(
+                "Excluir",
+                "Aluno excluído!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Excluir",
+                "Aluno não encontrado!"
+            )
+
+    # ================= LIMPAR CAMPOS =================
+
+    def limpar_campos(self):
+
+        self.codigo.delete(0, END)
+        self.nome.delete(0, END)
+        self.data.delete(0, END)
+        self.endereco.delete(0, END)
+        self.telefone.delete(0, END)
 
 
-# EXECUTAR
+# ================= EXECUTAR =================
+
 if __name__ == "__main__":
-    GestaoAnimais()
+    TelaAlunos()

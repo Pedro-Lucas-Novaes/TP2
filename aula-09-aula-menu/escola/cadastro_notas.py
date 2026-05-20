@@ -1,234 +1,501 @@
 from tkinter import *
-from tkinter import ttk, messagebox
-import tkinter as tk
-import sys
-import os
+from tkinter import messagebox
+from pymongo import MongoClient
 
 
-try:
-    import pymongo
-except:
-    os.system(f'"{sys.executable}" -m pip install pymongo')
-    import pymongo
-
-
-class CadastroClientes:
+class TelaNotas:
 
     def __init__(self):
-        self.tela = Tk()
-        self.tela.title("Exemplo Mongo DB")
-        self.tela.configure(bg="#ffffff")
 
-        self.largura = 700
-        self.altura = 400
+        # ================= CONEXÃO MONGODB =================
 
-        self.centralizar_tela()
-        self.conectar_banco()
-        self.criar_componentes()
-
-        self.tela.mainloop()
-
-  
-    # CRIANDO TELA
-   
-    def centralizar_tela(self):
-        largura_screen = self.tela.winfo_screenwidth()
-        altura_screen = self.tela.winfo_screenheight()
-
-        posx = int(largura_screen / 2 - self.largura / 2)
-        posy = int(altura_screen / 2 - self.altura / 2)
-
-        self.tela.geometry(f"{self.largura}x{self.altura}+{posx}+{posy}")
-        self.tela.resizable(True, True)
-
-    
-    # CRIAR BANCO
-  
-    def conectar_banco(self):
-        self.cliente = pymongo.MongoClient("mongodb://localhost:27017/")
-        self.db = self.cliente["exemplo"]
-        self.collection = self.db["clientes"]
-
-    
-    # COMPONENTES    
-    def criar_componentes(self):
-        self.criar_labels()
-        self.criar_campos()
-        self.criar_icones()
-        self.criar_botoes()
-
-    def criar_labels(self):
-        Label(
-            self.tela,
-            text="Cadastro de Clientes",
-            font=("Arial", 22, "bold"),
-            bg="#ffffff"
-        ).place(x=180, y=30)
-
-        Label(self.tela, text="Código:", bg="#ffffff").place(x=130, y=100)
-        Label(self.tela, text="Nome:", bg="#ffffff").place(x=130, y=130)
-        Label(self.tela, text="CPF:", bg="#ffffff").place(x=450, y=130)
-        Label(self.tela, text="Idade:", bg="#ffffff").place(x=130, y=160)
-        Label(self.tela, text="Rua:", bg="#ffffff").place(x=450, y=160)
-        Label(self.tela, text="Bairro:", bg="#ffffff").place(x=130, y=190)
-        Label(self.tela, text="Estado:", bg="#ffffff").place(x=330, y=190)
-        Label(self.tela, text="Cidade:", bg="#ffffff").place(x=520, y=190)
-
-        self.lbl_resultado = Label(self.tela, text="", bg="#ffffff")
-        self.lbl_resultado.place(x=450, y=300)
-
-    def criar_campos(self):
-        self.txt_codigo = Entry(self.tela, width=20)
-        self.txt_nome = Entry(self.tela, width=35)
-        self.txt_cpf = Entry(self.tela, width=20)
-        self.txt_idade = Entry(self.tela, width=20)
-        self.txt_end = Entry(self.tela, width=20)
-        self.txt_bairro = Entry(self.tela, width=18)
-        self.txt_cidade = Entry(self.tela, width=15)
-
-        self.comboestado = ttk.Combobox(
-            self.tela,
-            values=[
-                "São Paulo",
-                "Rio de Janeiro",
-                "Minas Gerais",
-                "Espírito Santo"
-            ],
-            width=15
+        self.cliente = MongoClient(
+            "mongodb://localhost:27017/"
         )
 
-        self.txt_codigo.place(x=190, y=100)
-        self.txt_nome.place(x=190, y=130)
-        self.txt_cpf.place(x=480, y=130)
-        self.txt_idade.place(x=190, y=160)
-        self.txt_end.place(x=480, y=160)
-        self.txt_bairro.place(x=190, y=190)
-        self.comboestado.place(x=380, y=190)
-        self.txt_cidade.place(x=570, y=190)
+        self.banco = self.cliente["escola"]
 
-    # ICONES
-    
-    def criar_icones(self):
-        self.foto_salvar = PhotoImage(file=r"icones\salvar.png")
-        self.foto_alterar = PhotoImage(file=r"icones\alterar.png")
-        self.foto_excluir = PhotoImage(file=r"icones\excluir.png")
-        self.foto_consultar = PhotoImage(file=r"icones\consultar.png")
-        self.foto_sair = PhotoImage(file=r"icones\sair.png")
+        self.colecao_notas = self.banco["notas"]
+        self.colecao_alunos = self.banco["alunos"]
+        self.colecao_professores = self.banco["professores"]
 
-    
-    # BOTOES
-   
-    def criar_botoes(self):
+        # ================= TELA =================
+
+        self.tela = Tk()
+        self.tela.title("Controle de Notas")
+        self.tela.geometry("850x650")
+        self.tela.resizable(False, False)
+
+        # ================= TÍTULO =================
+
+        Label(
+            self.tela,
+            text="Controle de Notas",
+            font=("Arial", 22, "bold"),
+            fg="blue"
+        ).place(x=280, y=20)
+
+        # ================= LABELS =================
+
+        Label(self.tela, text="ID Aluno:").place(x=100, y=100)
+        Label(self.tela, text="Nome Aluno:").place(x=450, y=100)
+
+        Label(self.tela, text="ID Professor:").place(x=100, y=150)
+        Label(self.tela, text="Nome Professor:").place(x=450, y=150)
+
+        Label(self.tela, text="Código Nota:").place(x=100, y=220)
+
+        Label(self.tela, text="Nota 1:").place(x=100, y=280)
+        Label(self.tela, text="Nota 2:").place(x=100, y=330)
+        Label(self.tela, text="Nota 3:").place(x=100, y=380)
+        Label(self.tela, text="Nota 4:").place(x=100, y=430)
+
+        # ================= CAMPOS =================
+
+        self.id_aluno = Entry(self.tela, width=20)
+        self.id_professor = Entry(self.tela, width=20)
+
+        self.codigo = Entry(self.tela, width=20)
+
+        self.nota1 = Entry(self.tela, width=20)
+        self.nota2 = Entry(self.tela, width=20)
+        self.nota3 = Entry(self.tela, width=20)
+        self.nota4 = Entry(self.tela, width=20)
+
+        self.id_aluno.place(x=220, y=100)
+        self.id_professor.place(x=220, y=150)
+
+        self.codigo.place(x=220, y=220)
+
+        self.nota1.place(x=220, y=280)
+        self.nota2.place(x=220, y=330)
+        self.nota3.place(x=220, y=380)
+        self.nota4.place(x=220, y=430)
+
+        # ================= LABELS NOMES =================
+
+        self.lbl_nome_aluno = Label(
+            self.tela,
+            text="",
+            width=30,
+            bg="white",
+            relief="solid",
+            anchor="w"
+        )
+
+        self.lbl_nome_aluno.place(x=560, y=100)
+
+        self.lbl_nome_professor = Label(
+            self.tela,
+            text="",
+            width=30,
+            bg="white",
+            relief="solid",
+            anchor="w"
+        )
+
+        self.lbl_nome_professor.place(x=560, y=150)
+
+        # ================= EVENTOS =================
+
+        self.id_aluno.bind(
+            "<KeyRelease>",
+            self.buscar_aluno
+        )
+
+        self.id_professor.bind(
+            "<KeyRelease>",
+            self.buscar_professor
+        )
+
+        # ================= ÍCONES =================
+
+        self.img_salvar = PhotoImage(file="icones/salvar.png")
+        self.img_consultar = PhotoImage(file="icones/consultar.png")
+        self.img_alterar = PhotoImage(file="icones/alterar.png")
+        self.img_excluir = PhotoImage(file="icones/excluir.png")
+
+        # ================= BOTÕES =================
 
         Button(
             self.tela,
-            text="Salvar",
-            image=self.foto_salvar,
+            text="Cadastrar",
+            image=self.img_salvar,
             compound=TOP,
-            command=self.salvar
-        ).place(x=130, y=250)
-
-        Button(
-            self.tela,
-            text="Alterar",
-            image=self.foto_alterar,
-            compound=TOP,
-            command=self.atualizar
-        ).place(x=220, y=250)
-
-        Button(
-            self.tela,
-            text="Excluir",
-            image=self.foto_excluir,
-            compound=TOP,
-            command=self.apagar
-        ).place(x=310, y=250)
+            command=self.cadastrar
+        ).place(x=120, y=520)
 
         Button(
             self.tela,
             text="Consultar",
-            image=self.foto_consultar,
+            image=self.img_consultar,
             compound=TOP,
             command=self.consultar
-        ).place(x=400, y=250)
+        ).place(x=280, y=520)
 
         Button(
             self.tela,
-            text="Sair",
-            image=self.foto_sair,
+            text="Editar",
+            image=self.img_alterar,
             compound=TOP,
-            command=self.tela.quit
-        ).place(x=510, y=250)
+            command=self.editar
+        ).place(x=440, y=520)
 
-    
-    # MÉTODOS
-    
-    def limpar(self):
-        self.txt_codigo.delete(0, END)
-        self.txt_nome.delete(0, END)
-        self.txt_cpf.delete(0, END)
-        self.txt_idade.delete(0, END)
-        self.txt_end.delete(0, END)
-        self.txt_bairro.delete(0, END)
-        self.txt_cidade.delete(0, END)
-        self.comboestado.set("")
+        Button(
+            self.tela,
+            text="Excluir",
+            image=self.img_excluir,
+            compound=TOP,
+            command=self.excluir
+        ).place(x=600, y=520)
 
-    def dados(self):
-        return {
-            "código": self.txt_codigo.get(),
-            "nome": self.txt_nome.get(),
-            "idade": int(self.txt_idade.get()),
-            "cpf": self.txt_cpf.get(),
-            "endereço": self.txt_end.get(),
-            "bairro": self.txt_bairro.get(),
-            "cidade": self.txt_cidade.get(),
-            "estado": self.comboestado.get()
-        }
+        # ================= MÉDIA =================
 
-    def salvar(self):
-        self.collection.insert_one(self.dados())
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente salvo!")
-
-    def atualizar(self):
-        codigo = self.txt_codigo.get()
-
-        self.collection.update_one(
-            {"código": codigo},
-            {"$set": self.dados()}
+        self.lbl_media = Label(
+            self.tela,
+            text="Média: 0.0",
+            font=("Arial", 16, "bold"),
+            fg="green"
         )
 
-        messagebox.showinfo("Sucesso", "Cliente atualizado!")
+        self.lbl_media.place(x=330, y=610)
 
-    def apagar(self):
-        codigo = self.txt_codigo.get()
+        self.tela.mainloop()
 
-        self.collection.delete_one({"código": codigo})
+    # ================= BUSCAR ALUNO =================
 
-        self.limpar()
-        messagebox.showinfo("Sucesso", "Cliente excluído!")
+    def buscar_aluno(self, event):
 
-    def consultar(self):
-        codigo = self.txt_codigo.get()
+        codigo = self.id_aluno.get()
 
-        resultado = self.collection.find_one({"código": codigo})
+        aluno = self.colecao_alunos.find_one({
+            "codigo": codigo
+        })
 
-        if resultado:
-            self.limpar()
+        if aluno:
 
-            self.txt_codigo.insert(0, resultado["código"])
-            self.txt_nome.insert(0, resultado["nome"])
-            self.txt_cpf.insert(0, resultado["cpf"])
-            self.txt_idade.insert(0, resultado["idade"])
-            self.txt_end.insert(0, resultado["endereço"])
-            self.txt_bairro.insert(0, resultado["bairro"])
-            self.txt_cidade.insert(0, resultado["cidade"])
-            self.comboestado.set(resultado["estado"])
+            self.lbl_nome_aluno.config(
+                text=aluno["nome"]
+            )
 
         else:
-            messagebox.showwarning("Aviso", "Cliente não encontrado")
+
+            self.lbl_nome_aluno.config(
+                text=""
+            )
+
+    # ================= BUSCAR PROFESSOR =================
+
+    def buscar_professor(self, event):
+
+        codigo = self.id_professor.get()
+
+        professor = self.colecao_professores.find_one({
+            "codigo": codigo
+        })
+
+        if professor:
+
+            self.lbl_nome_professor.config(
+                text=professor["nome"]
+            )
+
+        else:
+
+            self.lbl_nome_professor.config(
+                text=""
+            )
+
+    # ================= CADASTRAR =================
+
+    def cadastrar(self):
+
+        codigo = self.codigo.get()
+
+        id_aluno = self.id_aluno.get()
+        nome_aluno = self.lbl_nome_aluno.cget("text")
+
+        id_professor = self.id_professor.get()
+        nome_professor = self.lbl_nome_professor.cget("text")
+
+        nota1 = self.nota1.get()
+        nota2 = self.nota2.get()
+        nota3 = self.nota3.get()
+        nota4 = self.nota4.get()
+
+        # VALIDAR CAMPOS
+
+        if (
+            codigo == "" or
+            id_aluno == "" or
+            id_professor == "" or
+            nota1 == "" or
+            nota2 == "" or
+            nota3 == "" or
+            nota4 == ""
+        ):
+
+            messagebox.showerror(
+                "Erro",
+                "Preencha todos os campos!"
+            )
+
+            return
+
+        # VALIDAR ALUNO
+
+        if nome_aluno == "":
+
+            messagebox.showerror(
+                "Erro",
+                "Aluno não encontrado!"
+            )
+
+            return
+
+        # VALIDAR PROFESSOR
+
+        if nome_professor == "":
+
+            messagebox.showerror(
+                "Erro",
+                "Professor não encontrado!"
+            )
+
+            return
+
+        # VERIFICAR DUPLICADO
+
+        nota_existente = self.colecao_notas.find_one({
+            "codigo": codigo
+        })
+
+        if nota_existente:
+
+            messagebox.showwarning(
+                "Cadastro",
+                "Já existe uma nota com esse código!"
+            )
+
+            return
+
+        # CALCULAR MÉDIA
+
+        media = (
+            float(nota1) +
+            float(nota2) +
+            float(nota3) +
+            float(nota4)
+        ) / 4
+
+        # INSERIR
+
+        nota = {
+
+            "codigo": codigo,
+
+            "id_aluno": id_aluno,
+            "nome_aluno": nome_aluno,
+
+            "id_professor": id_professor,
+            "nome_professor": nome_professor,
+
+            "nota1": nota1,
+            "nota2": nota2,
+            "nota3": nota3,
+            "nota4": nota4,
+
+            "media": media
+
+        }
+
+        self.colecao_notas.insert_one(nota)
+
+        self.lbl_media.config(
+            text=f"Média: {media:.2f}"
+        )
+
+        messagebox.showinfo(
+            "Cadastro",
+            "Notas cadastradas!"
+        )
+
+        self.limpar_campos()
+
+    # ================= CONSULTAR =================
+
+    def consultar(self):
+
+        codigo = self.codigo.get()
+
+        nota = self.colecao_notas.find_one({
+            "codigo": codigo
+        })
+
+        if nota:
+
+            self.id_aluno.delete(0, END)
+            self.id_aluno.insert(
+                0,
+                nota["id_aluno"]
+            )
+
+            self.lbl_nome_aluno.config(
+                text=nota["nome_aluno"]
+            )
+
+            self.id_professor.delete(0, END)
+            self.id_professor.insert(
+                0,
+                nota["id_professor"]
+            )
+
+            self.lbl_nome_professor.config(
+                text=nota["nome_professor"]
+            )
+
+            self.nota1.delete(0, END)
+            self.nota1.insert(
+                0,
+                nota["nota1"]
+            )
+
+            self.nota2.delete(0, END)
+            self.nota2.insert(
+                0,
+                nota["nota2"]
+            )
+
+            self.nota3.delete(0, END)
+            self.nota3.insert(
+                0,
+                nota["nota3"]
+            )
+
+            self.nota4.delete(0, END)
+            self.nota4.insert(
+                0,
+                nota["nota4"]
+            )
+
+            self.lbl_media.config(
+                text=f"Média: {nota['media']:.2f}"
+            )
+
+            messagebox.showinfo(
+                "Consulta",
+                "Registro encontrado!"
+            )
+
+        else:
+
+            messagebox.showwarning(
+                "Consulta",
+                "Registro não encontrado!"
+            )
+
+    # ================= EDITAR =================
+
+    def editar(self):
+
+        codigo = self.codigo.get()
+
+        nota1 = self.nota1.get()
+        nota2 = self.nota2.get()
+        nota3 = self.nota3.get()
+        nota4 = self.nota4.get()
+
+        media = (
+            float(nota1) +
+            float(nota2) +
+            float(nota3) +
+            float(nota4)
+        ) / 4
+
+        resultado = self.colecao_notas.update_one(
+
+            {"codigo": codigo},
+
+            {
+                "$set": {
+
+                    "nota1": nota1,
+                    "nota2": nota2,
+                    "nota3": nota3,
+                    "nota4": nota4,
+                    "media": media
+
+                }
+            }
+        )
+
+        if resultado.modified_count > 0:
+
+            self.lbl_media.config(
+                text=f"Média: {media:.2f}"
+            )
+
+            messagebox.showinfo(
+                "Editar",
+                "Notas alteradas!"
+            )
+
+        else:
+
+            messagebox.showwarning(
+                "Editar",
+                "Registro não encontrado!"
+            )
+
+    # ================= EXCLUIR =================
+
+    def excluir(self):
+
+        codigo = self.codigo.get()
+
+        resultado = self.colecao_notas.delete_one({
+            "codigo": codigo
+        })
+
+        if resultado.deleted_count > 0:
+
+            messagebox.showinfo(
+                "Excluir",
+                "Registro excluído!"
+            )
+
+            self.limpar_campos()
+
+        else:
+
+            messagebox.showwarning(
+                "Excluir",
+                "Registro não encontrado!"
+            )
+
+    # ================= LIMPAR =================
+
+    def limpar_campos(self):
+
+        self.codigo.delete(0, END)
+
+        self.id_aluno.delete(0, END)
+        self.id_professor.delete(0, END)
+
+        self.nota1.delete(0, END)
+        self.nota2.delete(0, END)
+        self.nota3.delete(0, END)
+        self.nota4.delete(0, END)
+
+        self.lbl_nome_aluno.config(text="")
+        self.lbl_nome_professor.config(text="")
+
+        self.lbl_media.config(
+            text="Média: 0.0"
+        )
 
 
-# EXECUTAR
+# ================= EXECUTAR =================
+
 if __name__ == "__main__":
-    CadastroClientes()
+    TelaNotas()
