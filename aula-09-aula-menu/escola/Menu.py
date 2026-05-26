@@ -4,7 +4,6 @@ import subprocess
 import sys
 import os
 
-# Instale a biblioteca Pillow caso de erro
 try:
     from PIL import Image, ImageTk
 except:
